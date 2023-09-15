@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace LibraryApp.Controllers
+﻿namespace LibraryApp.Controllers
 {
 	using Data;
+	using Microsoft.AspNetCore.Mvc;
+	using Models;
 
 	public class CategoryController : Controller
 	{
@@ -17,6 +17,23 @@ namespace LibraryApp.Controllers
 		{
 			var categories = _db.Categories.ToList();
 			return View(categories);
+		}
+
+		public IActionResult Create()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public IActionResult Create(Category category)
+		{
+			if (ModelState.IsValid)
+			{
+				_db.Categories.Add(category);
+				_db.SaveChanges();
+				return RedirectToAction("Index");
+			}
+			return View();
 		}
 	}
 }
