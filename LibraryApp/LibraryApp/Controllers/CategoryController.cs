@@ -60,5 +60,20 @@
 			}
 			return View();
 		}
+
+		public IActionResult Delete(int? id)
+		{
+			if (id.HasValue)
+			{
+				var category = _db.Categories.FirstOrDefault(x => x.Id == id.Value);
+				if (category != null)
+				{
+					_db.Categories.Remove(category);
+					_db.SaveChanges();
+					return RedirectToAction("Index");
+				}
+			}
+			return NotFound();
+		}
 	}
 }
