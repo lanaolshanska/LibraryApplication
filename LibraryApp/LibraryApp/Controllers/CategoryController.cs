@@ -31,6 +31,7 @@
 			{
 				_db.Categories.Add(category);
 				_db.SaveChanges();
+				TempData["successMessage"] = "Item was successfully created!";
 				return RedirectToAction("Index");
 			}
 			return View();
@@ -56,6 +57,7 @@
 			{
 				_db.Categories.Update(category);
 				_db.SaveChanges();
+				TempData["successMessage"] = "Item was successfully updated!";
 				return RedirectToAction("Index");
 			}
 			return View();
@@ -70,6 +72,7 @@
 				{
 					_db.Categories.Remove(category);
 					_db.SaveChanges();
+					TempData["warningMessage"] = "Item was deleted!";
 					return RedirectToAction("Index");
 				}
 			}
