@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace LibraryApp.Migrations
+namespace Library.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class CreateCategoryTable : Migration

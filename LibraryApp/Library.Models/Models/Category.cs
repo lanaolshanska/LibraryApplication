@@ -1,4 +1,4 @@
-﻿namespace LibraryApp.Models
+﻿namespace Library.Models
 {
 	using System.ComponentModel.DataAnnotations;
 

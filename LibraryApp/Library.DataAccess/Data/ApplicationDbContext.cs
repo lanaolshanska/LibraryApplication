@@ -1,7 +1,7 @@
-﻿namespace LibraryApp.Data
+﻿namespace Library.DataAccess.Data
 {
+	using Library.Models;
 	using Microsoft.EntityFrameworkCore;
-	using Models;
 
 	public class ApplicationDbContext : DbContext
 	{

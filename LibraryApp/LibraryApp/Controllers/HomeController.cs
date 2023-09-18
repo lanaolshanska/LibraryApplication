@@ -1,9 +1,9 @@
-using LibraryApp.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-
 namespace LibraryApp.Controllers
 {
+	using Library.Models;
+	using Microsoft.AspNetCore.Mvc;
+	using System.Diagnostics;
+
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;

@@ -1,8 +1,8 @@
 ﻿namespace LibraryApp.Controllers
 {
-	using Data;
+	using Library.DataAccess.Data;
+	using Library.Models;
 	using Microsoft.AspNetCore.Mvc;
-	using Models;
 
 	public class CategoryController : Controller
 	{

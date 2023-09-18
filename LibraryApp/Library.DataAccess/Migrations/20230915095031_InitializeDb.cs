@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace LibraryApp.Migrations
+namespace Library.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class InitializeDb : Migration
