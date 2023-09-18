@@ -1,21 +1,21 @@
 ﻿namespace LibraryApp.Controllers
 {
-	using Library.DataAccess.Data;
+	using Library.DataAccess.Repository;
 	using Library.Models;
 	using Microsoft.AspNetCore.Mvc;
 
 	public class CategoryController : Controller
 	{
-		private readonly ApplicationDbContext _db;
+		private readonly ICategoryRepository _categoryRepository;
 
-		public CategoryController(ApplicationDbContext db)
+		public CategoryController(ICategoryRepository categoryRepository)
 		{
-			_db = db;
+			_categoryRepository = categoryRepository;
 		}
 
 		public IActionResult Index()
 		{
-			var categories = _db.Categories.ToList();
+			var categories = _categoryRepository.GetAll();
 			return View(categories);
 		}
 
@@ -29,8 +29,7 @@
 		{
 			if (ModelState.IsValid)
 			{
-				_db.Categories.Add(category);
-				_db.SaveChanges();
+				_categoryRepository.Create(category);
 				TempData["successMessage"] = "Item was successfully created!";
 				return RedirectToAction("Index");
 			}
@@ -41,7 +40,7 @@
 		{
 			if (id.HasValue)
 			{
-				var category = _db.Categories.FirstOrDefault(x => x.Id == id.Value);
+				var category = _categoryRepository.Get(id.Value);
 				if (category != null)
 				{
 					return View(category);
@@ -55,8 +54,7 @@
 		{
 			if (ModelState.IsValid)
 			{
-				_db.Categories.Update(category);
-				_db.SaveChanges();
+				_categoryRepository.Update(category);
 				TempData["successMessage"] = "Item was successfully updated!";
 				return RedirectToAction("Index");
 			}
@@ -67,14 +65,9 @@
 		{
 			if (id.HasValue)
 			{
-				var category = _db.Categories.FirstOrDefault(x => x.Id == id.Value);
-				if (category != null)
-				{
-					_db.Categories.Remove(category);
-					_db.SaveChanges();
-					TempData["warningMessage"] = "Item was deleted!";
-					return RedirectToAction("Index");
-				}
+				_categoryRepository.Delete(id.Value);
+				TempData["warningMessage"] = "Item was deleted!";
+				return RedirectToAction("Index");
 			}
 			return NotFound();
 		}
