@@ -7,8 +7,13 @@ a.navbar-brand {
   word-break: break-all;
 }
 
-a {
-  color: #0077cc;
+ul.dropdown-menu {
+    font-size: 1rem;
+    background: #1a1a1a;
+    background-image: none !important;
+    --bs-dropdown-link-color: #ffffff8c;
+    --bs-dropdown-link-hover-color: white;
+    --bs-dropdown-link-hover-bg: #1a1a1a;
 }
 
 .btn-primary {
@@ -46,3 +51,4 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
