@@ -40,7 +40,7 @@
         {
             if (id.HasValue)
             {
-                var category = _categoryRepository.Get(id.Value);
+                var category = _categoryRepository.GetById(id.Value);
                 if (category != null)
                 {
                     return View(category);

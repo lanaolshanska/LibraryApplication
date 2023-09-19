@@ -15,7 +15,7 @@
 			_dbSet = db.Set<T>();
 		}
 
-		public virtual T Get(int id)
+		public virtual T GetById(int id)
 		{
 			return _dbSet.Find(id);
 		}

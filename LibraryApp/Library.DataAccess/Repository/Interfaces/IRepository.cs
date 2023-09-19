@@ -2,7 +2,7 @@
 {
     public interface IRepository<T> where T : class
     {
-        T Get(int id);
+        T GetById(int id);
         IEnumerable<T> GetAll();
         IEnumerable<T> GetWhere(Func<T, bool> expression);
         void Create(T entity);
