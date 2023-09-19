@@ -1,6 +1,6 @@
 ﻿namespace LibraryApp.Areas.Admin.Controllers
 {
-    using Library.DataAccess.Repository;
+    using Library.DataAccess.Repository.Interfaces;
     using Library.Models;
     using Microsoft.AspNetCore.Mvc;
 

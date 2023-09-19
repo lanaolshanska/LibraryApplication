@@ -1,9 +1,10 @@
 ﻿namespace Library.DataAccess.Repository
 {
-	using Library.DataAccess.Data;
-	using Microsoft.EntityFrameworkCore;
+    using Library.DataAccess.Data;
+    using Library.DataAccess.Repository.Interfaces;
+    using Microsoft.EntityFrameworkCore;
 
-	public abstract class Repository<T> : IRepository<T> where T : class
+    public abstract class Repository<T> : IRepository<T> where T : class
 	{
 		private readonly ApplicationDbContext _db;
 		private readonly DbSet<T> _dbSet;
