@@ -4,7 +4,7 @@
 	using Library.DataAccess.Repository.Interfaces;
 	using Library.Models;
 
-	internal class ProductRepository : Repository<Product>, IProductRepository
+	public class ProductRepository : Repository<Product>, IProductRepository
 	{
 		public ProductRepository(ApplicationDbContext db) : base(db)
 		{
