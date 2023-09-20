@@ -2,14 +2,18 @@
 {
 	using Library.DataAccess.Repository.Interfaces;
 	using Library.Models;
+	using Library.Models.ViewModels;
 	using Microsoft.AspNetCore.Mvc;
+	using Microsoft.AspNetCore.Mvc.Rendering;
 
 	public class ProductController : Controller
 	{
 		private readonly IProductRepository _productRepository;
-		public ProductController(IProductRepository productRepository)
+		private readonly ICategoryRepository _categoryRepository;
+		public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
 		{
 			_productRepository = productRepository;
+			_categoryRepository = categoryRepository;
 		}
 
 		public IActionResult Index()
@@ -20,19 +24,25 @@
 
 		public IActionResult Create()
 		{
-			return View();
+			var productVm = new ProductViewModel();
+			productVm.Categories = _categoryRepository.GetCategoriesList();
+			return View(productVm);
 		}
 
 		[HttpPost]
-		public IActionResult Create(Product product)
+		public IActionResult Create(ProductViewModel productVm)
 		{
 			if (ModelState.IsValid)
 			{
-				_productRepository.Create(product);
+				_productRepository.Create(productVm.Product);
 				TempData["successMessage"] = "Item was successfully created!";
 				return RedirectToAction("Index");
 			}
-			return View();
+			else
+			{
+				productVm.Categories = _categoryRepository.GetCategoriesList();
+				return View(productVm);
+			}
 		}
 
 		public IActionResult Update(int? id)
