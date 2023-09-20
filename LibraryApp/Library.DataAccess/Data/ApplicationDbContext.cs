@@ -29,7 +29,9 @@
 					Author = "Billy Spark",
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "SWD9999001",
-					Price = 90
+					Price = 90,
+					ImageUrl = "",
+					CategoryId = 1
 				},
 				new Product
 				{
@@ -38,7 +40,9 @@
 					Author = "Nancy Hoover",
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "CAW777777701",
-					Price = 30
+					Price = 30,
+					ImageUrl = "",
+					CategoryId = 2
 				},
 				new Product
 				{
@@ -47,7 +51,9 @@
 					Author = "Julian Button",
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "RITO5555501",
-					Price = 50
+					Price = 50,
+					ImageUrl = "",
+					CategoryId = 3
 				},
 				new Product
 				{
@@ -56,7 +62,9 @@
 					Author = "Abby Muscles",
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "WS3333333301",
-					Price = 65
+					Price = 65,
+					ImageUrl = "",
+					CategoryId = 1
 				},
 				new Product
 				{
@@ -65,7 +73,9 @@
 					Author = "Ron Parker",
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "SOTJ1111111101",
-					Price = 27
+					Price = 27,
+					ImageUrl = "",
+					CategoryId = 2
 				},
 				new Product
 				{
@@ -74,7 +84,9 @@
 					Author = "Laura Phantom",
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "FOT000000001",
-					Price = 23
+					Price = 23,
+					ImageUrl = "",
+					CategoryId = 3
 				}
 			);
 		}
