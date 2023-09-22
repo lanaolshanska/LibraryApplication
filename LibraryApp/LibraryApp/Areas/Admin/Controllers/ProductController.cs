@@ -4,7 +4,6 @@
 	using Library.Models;
 	using Library.Models.ViewModels;
 	using Microsoft.AspNetCore.Mvc;
-	using Microsoft.AspNetCore.Mvc.Rendering;
 
 	public class ProductController : Controller
 	{
@@ -22,20 +21,30 @@
 			return View(products);
 		}
 
-		public IActionResult Create()
+		public IActionResult CreateOrUpdate(int? id)
 		{
 			var productVm = new ProductViewModel();
 			productVm.Categories = _categoryRepository.GetCategoriesList();
+			productVm.Product = id.HasValue ? _productRepository.GetById(id.Value) : new Product();
 			return View(productVm);
 		}
 
 		[HttpPost]
-		public IActionResult Create(ProductViewModel productVm)
+		public IActionResult CreateOrUpdate(ProductViewModel productVm, IFormFile? file)
 		{
 			if (ModelState.IsValid)
 			{
-				_productRepository.Create(productVm.Product);
-				TempData["successMessage"] = "Item was successfully created!";
+				if (productVm.Product.Id == 0)
+				{
+					_productRepository.Create(productVm.Product);
+					TempData["successMessage"] = "Item was successfully created!";
+					
+				}
+				else
+				{
+					_productRepository.Update(productVm.Product);
+					TempData["successMessage"] = "Item was successfully updated!";
+				}
 				return RedirectToAction("Index");
 			}
 			else
@@ -43,31 +52,6 @@
 				productVm.Categories = _categoryRepository.GetCategoriesList();
 				return View(productVm);
 			}
-		}
-
-		public IActionResult Update(int? id)
-		{
-			if (id.HasValue)
-			{
-				var product = _productRepository.GetById(id.Value);
-				if (product != null)
-				{
-					return View(product);
-				}
-			}
-			return NotFound();
-		}
-
-		[HttpPost]
-		public IActionResult Update(Product product)
-		{
-			if (ModelState.IsValid)
-			{
-				_productRepository.Update(product);
-				TempData["successMessage"] = "Item was successfully updated!";
-				return RedirectToAction("Index");
-			}
-			return View();
 		}
 
 		public IActionResult Delete(int? id)
