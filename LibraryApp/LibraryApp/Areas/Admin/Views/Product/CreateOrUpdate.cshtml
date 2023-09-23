@@ -40,7 +40,11 @@
 			</div>
 			<div class="mb-3 row p-1">
 				<label asp-for="@Model.Product.ImageUrl" class="p-0"></label>
-				<input type="file" class="form-control" />
+				<input asp-for="@Model.Product.ImageUrl" hidden />
+				<input type="file" name="file" class="form-control" />
+			</div>
+			<div>
+				<img src="~/@Model.Product.ImageUrl" style="max-height:200px; max-width:200px; margin-bottom:2rem;"/>
 			</div>
 			<div class="row">
 				<div class="col-6 col-md-3">

@@ -9,10 +9,14 @@
 	{
 		private readonly IProductRepository _productRepository;
 		private readonly ICategoryRepository _categoryRepository;
-		public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository)
+		private readonly IWebHostEnvironment _webHostEnvironment;
+
+		private const string imagesPath = @"images\product";
+		public ProductController(IProductRepository productRepository, ICategoryRepository categoryRepository, IWebHostEnvironment webHostEnvironment)
 		{
 			_productRepository = productRepository;
 			_categoryRepository = categoryRepository;
+			_webHostEnvironment = webHostEnvironment;
 		}
 
 		public IActionResult Index()
@@ -34,11 +38,13 @@
 		{
 			if (ModelState.IsValid)
 			{
+				productVm.Product.ImageUrl = SaveFile(file, productVm.Product.ImageUrl);
+
 				if (productVm.Product.Id == 0)
 				{
 					_productRepository.Create(productVm.Product);
 					TempData["successMessage"] = "Item was successfully created!";
-					
+
 				}
 				else
 				{
@@ -63,6 +69,30 @@
 				return RedirectToAction("Index");
 			}
 			return NotFound();
+		}
+
+		private string SaveFile(IFormFile? file, string imageUrl)
+		{
+			if (file != null)
+			{
+				if (!string.IsNullOrEmpty(imageUrl))
+				{
+					var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
+					if (System.IO.File.Exists(oldFilePath))
+					{
+						System.IO.File.Delete(oldFilePath);
+					}
+				}
+				var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+				var filePath = Path.Combine(imagesPath, fileName);
+				var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, filePath);
+				using (var fileStream = new FileStream(fullPath, FileMode.Create))
+				{
+					file.CopyTo(fileStream);
+				}
+				return filePath;
+			}
+			return imageUrl;
 		}
 	}
 }
