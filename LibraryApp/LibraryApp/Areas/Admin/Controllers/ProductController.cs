@@ -38,7 +38,8 @@
 		{
 			if (ModelState.IsValid)
 			{
-				productVm.Product.ImageUrl = SaveFile(file, productVm.Product.ImageUrl);
+				if (file != null)
+					productVm.Product.ImageUrl = SaveFile(file, productVm.Product.ImageUrl);
 
 				if (productVm.Product.Id == 0)
 				{
@@ -60,39 +61,57 @@
 			}
 		}
 
-		public IActionResult Delete(int? id)
+		private string SaveFile(IFormFile file, string? imageUrl)
 		{
-			if (id.HasValue)
+			if (!string.IsNullOrEmpty(imageUrl))
 			{
-				_productRepository.Delete(id.Value);
-				TempData["warningMessage"] = "Item was deleted!";
-				return RedirectToAction("Index");
+				DeleteOldFile(imageUrl);
 			}
-			return NotFound();
+			var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+			var filePath = Path.Combine(imagesPath, fileName);
+			var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, filePath);
+
+			using (var fileStream = new FileStream(fullPath, FileMode.Create))
+			{
+				file.CopyTo(fileStream);
+			}
+			return filePath;
 		}
 
-		private string SaveFile(IFormFile? file, string imageUrl)
+		private void DeleteOldFile(string imageUrl)
 		{
-			if (file != null)
+			var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
+			if (System.IO.File.Exists(oldFilePath))
 			{
-				if (!string.IsNullOrEmpty(imageUrl))
-				{
-					var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
-					if (System.IO.File.Exists(oldFilePath))
-					{
-						System.IO.File.Delete(oldFilePath);
-					}
-				}
-				var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-				var filePath = Path.Combine(imagesPath, fileName);
-				var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, filePath);
-				using (var fileStream = new FileStream(fullPath, FileMode.Create))
-				{
-					file.CopyTo(fileStream);
-				}
-				return filePath;
+				System.IO.File.Delete(oldFilePath);
 			}
-			return imageUrl;
 		}
-	}
+
+		#region ApiCalls
+
+		[HttpGet]
+		public IActionResult GetAll()
+		{
+			var products = _productRepository.GetAll();
+			return Json(new { data = products });
+		}
+
+		[HttpDelete]
+		public IActionResult Delete(int id)
+		{
+			var product = _productRepository.GetById(id);
+			if (product == null)
+			{
+				return Json(new { success = false, message = "Item for deleting not found!" });
+			}
+
+			if (!string.IsNullOrEmpty(product.ImageUrl))
+				DeleteOldFile(product.ImageUrl);
+
+			_productRepository.Delete(id);
+			return Json(new { success = true, message = "Item was deleted!" });
+		}
+	}	
+
+	#endregion
 }

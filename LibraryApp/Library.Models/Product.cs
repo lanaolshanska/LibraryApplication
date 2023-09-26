@@ -19,7 +19,7 @@
 		public int Price { get; set; }
 		public string Description { get; set; }
 		[ValidateNever]
-		public string ImageUrl { get; set; } = string.Empty;
+		public string? ImageUrl { get; set; }
 		public int CategoryId { get; set; }
 
 		[ForeignKey("CategoryId")]
