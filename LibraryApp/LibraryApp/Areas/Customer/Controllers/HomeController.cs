@@ -20,6 +20,12 @@ namespace LibraryApp.Areas.Customer.Controllers
             return View(products);
         }
 
+		public IActionResult Details(int id)
+		{
+			var product = _productRepository.GetAll().Where(p => p.Id == id).FirstOrDefault();
+			return View(product);
+		}
+
 		public IActionResult Privacy()
         {
             return View();

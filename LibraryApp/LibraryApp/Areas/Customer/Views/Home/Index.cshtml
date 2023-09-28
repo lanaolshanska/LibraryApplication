@@ -11,9 +11,9 @@
 						<div class="card-body pb-0">
 							<div class="pl-1">
 								<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
-								<p class="card-title text-warning text-center">by <b>@product.Author</b></p>
+								<p class="card-title text-warning text-center">by <strong>@product.Author</strong></p>
 							</div>
-							<div class="pl-1">
+							<div class="my-2">
 								<p class="text-dark text-opacity-75 text-center mb-0">
 									Price:
 									<span>
@@ -23,7 +23,7 @@
 							</div>
 						</div>
 						<div>
-							<a href="#" class="btn btn-primary bg-gradient border-0 form-control">
+							<a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 form-control">
 								Details
 							</a>
 						</div>
