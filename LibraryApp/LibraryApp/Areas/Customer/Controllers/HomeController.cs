@@ -5,6 +5,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 	using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
 
+    [Area("Customer")]
     public class HomeController : Controller
     {
 		private readonly IProductRepository _productRepository;
