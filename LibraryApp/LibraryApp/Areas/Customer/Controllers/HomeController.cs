@@ -2,10 +2,11 @@ namespace LibraryApp.Areas.Customer.Controllers
 {
 	using Library.DataAccess.Repository.Interfaces;
 	using Library.Models;
-	using Microsoft.AspNetCore.Mvc;
+    using Library.Utility;
+    using Microsoft.AspNetCore.Mvc;
     using System.Diagnostics;
 
-    [Area("Customer")]
+    [Area(Role.Customer)]
     public class HomeController : Controller
     {
 		private readonly IProductRepository _productRepository;

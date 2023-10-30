@@ -2,9 +2,13 @@
 {
     using Library.DataAccess.Repository.Interfaces;
     using Library.Models;
+    using Library.Utility;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    public class CategoryController : Controller
+	[Area(Role.Admin)]
+    [Authorize(Roles=Role.Admin)]
+	public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
 
