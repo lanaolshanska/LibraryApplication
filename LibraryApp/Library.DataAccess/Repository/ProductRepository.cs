@@ -15,5 +15,5 @@
 				.Include(t => t.Category)
 				.ToList();
 		}
-	}
+    }
 }
