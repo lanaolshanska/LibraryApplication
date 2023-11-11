@@ -8,8 +8,8 @@ namespace Library.Models
 	{
 		public int Id { get; set; }
 		public int ProductId { get; set; }
-		public required string ApplicationUserId { get; set; }
-		
+		public string ApplicationUserId { get; set; }
+
 		[Range(1, 100, ErrorMessage = "Please enter a value between 1 and 100")]
 		public int Count { get; set; }
 
