@@ -31,14 +31,14 @@
 
 		public IActionResult CreateOrUpdate(int? id)
 		{
-			var productVm = new ProductViewModel();
+			var productVm = new ProductVM();
 			productVm.Categories = _categoryRepository.GetCategoriesList();
 			productVm.Product = id.HasValue ? _productRepository.GetById(id.Value) : new Product();
 			return View(productVm);
 		}
 
 		[HttpPost]
-		public IActionResult CreateOrUpdate(ProductViewModel productVm, IFormFile? file)
+		public IActionResult CreateOrUpdate(ProductVM productVm, IFormFile? file)
 		{
 			if (ModelState.IsValid)
 			{
