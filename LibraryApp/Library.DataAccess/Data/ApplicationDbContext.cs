@@ -17,7 +17,11 @@
         public DbSet<Company> Companies { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 		public DbSet<ShoppingCart> ShoppingCarts { get; set; }
-
+		public DbSet<Order> Orders { get; set; }
+		public DbSet<OrderProduct> OrderProducts { get; set; }
+		public DbSet<UserAddress> UserAddress { get; set; }
+		public DbSet<ShipmentDetail> ShipmentDetail { get; set; }
+		public DbSet<PaymentDetail> PaymentDetail { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
