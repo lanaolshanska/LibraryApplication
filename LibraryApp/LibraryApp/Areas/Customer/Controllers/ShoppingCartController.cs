@@ -1,13 +1,14 @@
-﻿using Library.DataAccess.Repository;
-using Library.DataAccess.Repository.Interfaces;
+﻿using Library.DataAccess.Repository.Interfaces;
 using Library.Models.ViewModels;
 using Library.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace LibraryApp.Areas.Customer.Controllers
 {
 	[Area(Role.Customer)]
+	[Authorize]
 	public class ShoppingCartController : Controller
 	{
 		private readonly IShoppingCartRepository _shoppingCartRepository;
@@ -29,6 +30,11 @@ namespace LibraryApp.Areas.Customer.Controllers
 			};
 
 			return View(shoppingCartModel);
+		}
+
+		public IActionResult Summary()
+		{
+			return View();
 		}
 
 		public IActionResult Plus(int id)
