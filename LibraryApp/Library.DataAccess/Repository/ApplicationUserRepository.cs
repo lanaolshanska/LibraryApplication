@@ -1,6 +1,7 @@
 ﻿using Library.DataAccess.Data;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.DataAccess.Repository
 {
@@ -8,6 +9,13 @@ namespace Library.DataAccess.Repository
 	{
 		public ApplicationUserRepository(ApplicationDbContext db) : base(db)
 		{
+		}
+
+		public ApplicationUser? GetById(string id)
+		{
+			return _dbSet.Include(t => t.Address)
+						.Where(x => x.Id.Equals(id))
+						.FirstOrDefault();
 		}
 	}
 }

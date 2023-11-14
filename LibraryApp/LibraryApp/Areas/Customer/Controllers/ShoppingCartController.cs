@@ -1,4 +1,5 @@
 ﻿using Library.DataAccess.Repository.Interfaces;
+using Library.Models;
 using Library.Models.ViewModels;
 using Library.Utility;
 using Microsoft.AspNetCore.Authorization;
@@ -12,15 +13,16 @@ namespace LibraryApp.Areas.Customer.Controllers
 	public class ShoppingCartController : Controller
 	{
 		private readonly IShoppingCartRepository _shoppingCartRepository;
+		private readonly IApplicationUserRepository _userRepository;
 
-		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository)
+		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository, IApplicationUserRepository userRepository)
 		{
 			_shoppingCartRepository = shoppingCartRepository;
+			_userRepository = userRepository;
 		}
 		public IActionResult Index()
 		{
-			var claimsIdentity = (ClaimsIdentity)User.Identity;
-			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			var userId = GetApplicationUserId();
 			var userShoppingCarts = _shoppingCartRepository.GetByUserId(userId);
 
 			var shoppingCartModel = new ShoppingCartVM
@@ -34,7 +36,20 @@ namespace LibraryApp.Areas.Customer.Controllers
 
 		public IActionResult Summary()
 		{
-			return View();
+			var userId = GetApplicationUserId();
+			var products = _shoppingCartRepository.GetByUserId(userId);
+
+			var summaryViewModel = new SummaryVM
+			{
+				ProductList = products,
+				OrderTotal = products.Sum(x => x.Count * x.Product.Price),
+				Address = new UserAddress
+				{
+					Id = _userRepository.GetById(userId)?.Address?.Id ?? 0,
+				}
+			};
+
+			return View(summaryViewModel);
 		}
 
 		public IActionResult Plus(int id)
@@ -74,6 +89,13 @@ namespace LibraryApp.Areas.Customer.Controllers
 				_shoppingCartRepository.Delete(id);
 			}
 			return RedirectToAction(nameof(Index));
+		}
+
+		private string GetApplicationUserId()
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			return userId;
 		}
 	}
 }
