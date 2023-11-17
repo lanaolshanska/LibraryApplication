@@ -4,6 +4,7 @@ using Library.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231117134447_UpdateApplicationUserAddressRelations")]
+    partial class UpdateApplicationUserAddressRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -355,9 +358,6 @@ namespace Library.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -596,8 +596,16 @@ namespace Library.DataAccess.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
+
+                    b.Property<int?>("PrimaryAddressId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("CompanyId");
 
@@ -746,11 +754,17 @@ namespace Library.DataAccess.Migrations
 
             modelBuilder.Entity("Library.Models.ApplicationUser", b =>
                 {
+                    b.HasOne("Library.Models.UserAddress", "PrimaryAddress")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+
                     b.HasOne("Library.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
+
+                    b.Navigation("PrimaryAddress");
                 });
 
             modelBuilder.Entity("Library.Models.ApplicationUser", b =>

@@ -4,6 +4,6 @@ namespace Library.DataAccess.Repository.Interfaces
 {
 	public interface IApplicationUserRepository : IRepository<ApplicationUser>
 	{
-		public ApplicationUser? GetById(string id);
+		public ApplicationUser GetById(string id);
 	}
 }

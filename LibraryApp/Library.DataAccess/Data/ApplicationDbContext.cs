@@ -26,6 +26,13 @@
 		{
 			base.OnModelCreating(modelBuilder);
 
+			modelBuilder.Entity<ApplicationUser>()
+			.HasMany(e => e.Addresses)
+			.WithOne(e => e.ApplicationUser)
+			.HasForeignKey(e => e.ApplicationUserId)
+			.OnDelete(DeleteBehavior.ClientSetNull)
+			.IsRequired();
+
 			modelBuilder.Entity<Category>().HasData(
 				new Category { Id = 1, Name = "History" },
 				new Category { Id = 2, Name = "Action" },

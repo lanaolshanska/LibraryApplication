@@ -1,4 +1,5 @@
-﻿using Library.DataAccess.Repository.Interfaces;
+﻿using Library.DataAccess.Repository;
+using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
 using Library.Utility;
@@ -14,12 +15,15 @@ namespace LibraryApp.Areas.Customer.Controllers
 	{
 		private readonly IShoppingCartRepository _shoppingCartRepository;
 		private readonly IApplicationUserRepository _userRepository;
+		private readonly IUserAddressRepository _addressRepository;
 
-		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository, IApplicationUserRepository userRepository)
+		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository, IApplicationUserRepository userRepository, IUserAddressRepository addressRepository)
 		{
 			_shoppingCartRepository = shoppingCartRepository;
 			_userRepository = userRepository;
+			_addressRepository = addressRepository;
 		}
+
 		public IActionResult Index()
 		{
 			var userId = GetApplicationUserId();
@@ -38,15 +42,13 @@ namespace LibraryApp.Areas.Customer.Controllers
 		{
 			var userId = GetApplicationUserId();
 			var products = _shoppingCartRepository.GetByUserId(userId);
+			var primaryAddressId = _addressRepository.GetPrimaryUserAddress(userId)?.Id;
 
 			var summaryViewModel = new SummaryVM
 			{
 				ProductList = products,
 				OrderTotal = products.Sum(x => x.Count * x.Product.Price),
-				Address = new UserAddress
-				{
-					Id = _userRepository.GetById(userId)?.Address?.Id ?? 0,
-				}
+				Address = new UserAddress { Id = primaryAddressId ?? 0 }
 			};
 
 			return View(summaryViewModel);
@@ -97,5 +99,22 @@ namespace LibraryApp.Areas.Customer.Controllers
 			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 			return userId;
 		}
+
+		#region ApiCalls
+
+		[HttpGet]
+		public IActionResult GetAddress(int id)
+		{
+			var address = _addressRepository.GetById(1);
+			if (address != null)
+			{
+				return Json(new { success = true, address = address });
+			}
+			else
+			{
+				return Json(new { success = false, message = "Can not retrieve address!" });
+			}
+		}
+		#endregion
 	}
 }

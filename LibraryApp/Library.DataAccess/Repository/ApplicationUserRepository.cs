@@ -13,7 +13,7 @@ namespace Library.DataAccess.Repository
 
 		public ApplicationUser? GetById(string id)
 		{
-			return _dbSet.Include(t => t.Address)
+			return _dbSet.Include(t => t.Addresses)
 						.Where(x => x.Id.Equals(id))
 						.FirstOrDefault();
 		}

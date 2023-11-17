@@ -2,7 +2,7 @@
 {
     public class SummaryVM
     {
-        public IEnumerable<ShoppingCart> ProductList { get; set; }
+		public IEnumerable<ShoppingCart> ProductList { get; set; }
         public double OrderTotal { get; set; }
 		public UserAddress Address { get; set; }
 		public DateTime MinArrivalDate { get; set; } = DateTime.Now.AddDays(7);

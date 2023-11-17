@@ -18,5 +18,9 @@ namespace Library.Models
 		public string State { get; set; }
 		[Required]
 		public string PostalCode { get; set; }
+		public bool IsPrimary { get; set; }
+		public string ApplicationUserId { get; set; }
+		public ApplicationUser? ApplicationUser { get; set; }
+
 	}
 }

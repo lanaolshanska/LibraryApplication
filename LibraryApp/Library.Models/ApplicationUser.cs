@@ -11,11 +11,6 @@ namespace Library.Models
 		[ForeignKey("CompanyId")]
 		[ValidateNever]
 		public Company? Company { get; set; }
-
-		public int? AddressId { get; set; }
-
-		[ForeignKey("AddressId")]
-		[ValidateNever]
-		public UserAddress? Address { get; set; }
+		public List<UserAddress>? Addresses { get; set; }
 	}
 }
