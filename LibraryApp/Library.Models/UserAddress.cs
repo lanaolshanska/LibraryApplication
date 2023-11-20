@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace Library.Models
 {
@@ -19,6 +20,7 @@ namespace Library.Models
 		[Required]
 		public string PostalCode { get; set; }
 		public bool IsPrimary { get; set; }
+		[ValidateNever]
 		public string ApplicationUserId { get; set; }
 		public ApplicationUser? ApplicationUser { get; set; }
 

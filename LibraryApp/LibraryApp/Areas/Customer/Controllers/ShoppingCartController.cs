@@ -1,5 +1,4 @@
-﻿using Library.DataAccess.Repository;
-using Library.DataAccess.Repository.Interfaces;
+﻿using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
 using Library.Utility;
@@ -50,8 +49,20 @@ namespace LibraryApp.Areas.Customer.Controllers
 				OrderTotal = products.Sum(x => x.Count * x.Product.Price),
 				Address = new UserAddress { Id = primaryAddressId ?? 0 }
 			};
-
 			return View(summaryViewModel);
+		}
+
+		[HttpPost]
+		public IActionResult CreateOrder(SummaryVM summaryViewModel)
+		{
+			if (ModelState.IsValid)
+			{
+				var userId = GetApplicationUserId();
+				var addressId = GetShipmentAddressId(summaryViewModel.Address, userId);
+				
+
+			}
+			return RedirectToAction(nameof(Summary), (summaryViewModel));
 		}
 
 		public IActionResult Plus(int id)
@@ -100,12 +111,30 @@ namespace LibraryApp.Areas.Customer.Controllers
 			return userId;
 		}
 
+		private int GetShipmentAddressId(UserAddress newAddress, string userId)
+		{
+			int primaryAddressId;
+			var (isAddressUnique, existingAddress) = _addressRepository.IsUnique(newAddress, userId);
+			if (isAddressUnique)
+			{
+				newAddress.ApplicationUserId = userId;
+				_addressRepository.Create(newAddress);
+				primaryAddressId = newAddress.Id;
+			}
+			else
+			{
+				primaryAddressId = existingAddress.Id;
+			}
+			_addressRepository.SetPrimaryAddress(primaryAddressId, userId);
+			return primaryAddressId;
+		}
+
 		#region ApiCalls
 
 		[HttpGet]
 		public IActionResult GetAddress(int id)
 		{
-			var address = _addressRepository.GetById(1);
+			var address = _addressRepository.GetById(id);
 			if (address != null)
 			{
 				return Json(new { success = true, address = address });

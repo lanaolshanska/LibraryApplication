@@ -1,7 +1,10 @@
-﻿namespace Library.Models.ViewModels
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace Library.Models.ViewModels
 {
     public class SummaryVM
     {
+        [ValidateNever]
 		public IEnumerable<ShoppingCart> ProductList { get; set; }
         public double OrderTotal { get; set; }
 		public UserAddress Address { get; set; }
