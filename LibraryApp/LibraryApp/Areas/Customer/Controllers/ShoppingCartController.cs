@@ -59,6 +59,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 		{
 			var userId = GetApplicationUserId();
 			var products = _shoppingCartRepository.GetByUserId(userId);
+			
 			var primaryAddressId = _addressRepository.GetPrimaryUserAddress(userId)?.Id;
 
 			var summaryViewModel = new SummaryVM
@@ -115,7 +116,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 				TempData["successMessage"] = "Order was successfully created!";
 				return RedirectToAction("Index", "Home");
 			}
-			TempData["warningMessage"] = "Address is not valid!";
+			TempData["errorMessage"] = "Address is not valid!";
 			return RedirectToAction(nameof(Summary));
 		}
 
