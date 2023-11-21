@@ -4,6 +4,7 @@ using Library.Models.ViewModels;
 using Library.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using System.Security.Claims;
 
 namespace LibraryApp.Areas.Customer.Controllers
@@ -15,12 +16,29 @@ namespace LibraryApp.Areas.Customer.Controllers
 		private readonly IShoppingCartRepository _shoppingCartRepository;
 		private readonly IApplicationUserRepository _userRepository;
 		private readonly IUserAddressRepository _addressRepository;
+		private readonly IShipmentDetailRepository _shipmentRepository;
+		private readonly IPaymentDetailRepository _paymentRepository;
+		private readonly IOrderProductRepository _orderProductRepository;
+		private readonly IOrderRepository _orderRepository;
 
-		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository, IApplicationUserRepository userRepository, IUserAddressRepository addressRepository)
+		[BindProperty]
+		public SummaryVM OrderSummary { get; set; }
+
+		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository,
+									IApplicationUserRepository userRepository,
+									IUserAddressRepository addressRepository,
+									IShipmentDetailRepository shipmentRepository,
+									IPaymentDetailRepository paymentRepository,
+									IOrderProductRepository orderProductRepository,
+									IOrderRepository orderRepository)
 		{
 			_shoppingCartRepository = shoppingCartRepository;
 			_userRepository = userRepository;
 			_addressRepository = addressRepository;
+			_shipmentRepository = shipmentRepository;
+			_paymentRepository = paymentRepository;
+			_orderProductRepository = orderProductRepository;
+			_orderRepository = orderRepository;
 		}
 
 		public IActionResult Index()
@@ -58,11 +76,47 @@ namespace LibraryApp.Areas.Customer.Controllers
 			if (ModelState.IsValid)
 			{
 				var userId = GetApplicationUserId();
-				var addressId = GetShipmentAddressId(summaryViewModel.Address, userId);
-				
+				var user = _userRepository.GetById(userId);
 
+				var addressId = CreateOrUpdateAddress(summaryViewModel.Address, userId);
+
+				var shipmentDetail = new ShipmentDetail { UserAddressId = addressId };
+				_shipmentRepository.Create(shipmentDetail);
+
+				var paymentDetail = new PaymentDetail { Status = user.CompanyId.HasValue ? PaymentStatus.Delayed : PaymentStatus.Pending };
+				_paymentRepository.Create(paymentDetail);
+
+				var shoppingCarts = _shoppingCartRepository.GetByUserId(userId).ToList();
+
+				var order = new Order
+				{
+					Date = DateTime.Now,
+					Total = shoppingCarts.Sum(x => x.Count * x.Product.Price),
+					Status = user.CompanyId.HasValue ? OrderStatus.Approved : OrderStatus.Pending,
+					ApplicationUserId = userId,
+					ShipmentDetailId = shipmentDetail.Id,
+					PaymentDetailId = paymentDetail.Id
+				};
+
+				_orderRepository.Create(order);
+
+				shoppingCarts.ForEach(shoppingCart =>
+				{
+					_orderProductRepository.Create(
+							new OrderProduct
+							{
+								OrderId = order.Id,
+								ProductId = shoppingCart.ProductId,
+								Count = shoppingCart.Count,
+								Price = shoppingCart.Product.Price,
+							});
+					_shoppingCartRepository.Delete(shoppingCart.Id);
+				});
+				TempData["successMessage"] = "Order was successfully created!";
+				return RedirectToAction("Index", "Home");
 			}
-			return RedirectToAction(nameof(Summary), (summaryViewModel));
+			TempData["warningMessage"] = "Address is not valid!";
+			return RedirectToAction(nameof(Summary));
 		}
 
 		public IActionResult Plus(int id)
@@ -111,7 +165,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			return userId;
 		}
 
-		private int GetShipmentAddressId(UserAddress newAddress, string userId)
+		private int CreateOrUpdateAddress(UserAddress newAddress, string userId)
 		{
 			int primaryAddressId;
 			var (isAddressUnique, existingAddress) = _addressRepository.IsUnique(newAddress, userId);
