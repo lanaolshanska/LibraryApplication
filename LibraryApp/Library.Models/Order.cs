@@ -26,5 +26,6 @@ namespace Library.Models
 		[ForeignKey("ApplicationUserId")]
 		[ValidateNever]
 		public ApplicationUser ApplicationUser { get; set; }
+		public List<OrderProduct> Products { get; set; }
 	}
 }
