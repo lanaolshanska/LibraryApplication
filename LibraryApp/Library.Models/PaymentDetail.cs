@@ -10,6 +10,7 @@ namespace Library.Models
 		public DateTime Date { get; set; }
 		public DateOnly DueDate { get; set; }
 
-		public string? PaymentIntentId { get; set; }
+        public string? SessionId { get; set; }
+        public string? PaymentIntentId { get; set; }
 	}
 }
