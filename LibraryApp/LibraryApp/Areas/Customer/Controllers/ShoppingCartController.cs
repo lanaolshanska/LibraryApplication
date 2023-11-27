@@ -113,11 +113,15 @@ namespace LibraryApp.Areas.Customer.Controllers
 							});
 					_shoppingCartRepository.Delete(shoppingCart.Id);
 				});
-				TempData["successMessage"] = "Order was successfully created!";
-				return RedirectToAction("Index", "Home");
+				return RedirectToAction(nameof(OrderConfirmation), new { id = order.Id });
 			}
 			TempData["errorMessage"] = "Address is not valid!";
 			return RedirectToAction(nameof(Summary));
+		}
+
+		public IActionResult OrderConfirmation(int id)
+		{
+			return View(id);
 		}
 
 		public IActionResult Plus(int id)
