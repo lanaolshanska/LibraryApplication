@@ -3,6 +3,7 @@
     using Library.DataAccess.Data;
     using Library.DataAccess.Repository.Interfaces;
     using Microsoft.EntityFrameworkCore;
+    using System.Collections.Generic;
 
     public abstract class Repository<T> : IRepository<T> where T : class
 	{
@@ -51,5 +52,11 @@
 				_db.SaveChanges();
 			}
 		}
-	}
+
+        public void RemoveRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
+            _db.SaveChanges();
+        }
+    }
 }

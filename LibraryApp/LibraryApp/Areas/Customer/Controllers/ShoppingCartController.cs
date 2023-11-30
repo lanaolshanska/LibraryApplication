@@ -1,4 +1,5 @@
-﻿using Library.BusinessLogic.Interfaces;
+﻿using Library.BusinessLogic;
+using Library.BusinessLogic.Interfaces;
 using Library.BusinessLogic.Payments;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
@@ -7,6 +8,7 @@ using Library.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace LibraryApp.Areas.Customer.Controllers
@@ -101,6 +103,26 @@ namespace LibraryApp.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int id)
         {
+            var order = _orderService.GetById(id);
+            var payment = _paymentService.GetById(order.PaymentDetailId);
+            if(payment.Status != PaymentStatus.Delayed)
+            {
+                var sessionService = new SessionService();
+                var session = sessionService.Get(payment.SessionId);
+                if(session.PaymentStatus.ToLower() == "paid")
+                {
+                    _paymentService.UpdateStripePaymentDetails(payment.Id, session.Id, session.PaymentIntentId);
+                    
+                    order.Status = OrderStatus.Approved;
+                    _orderService.Update(order);
+
+                    payment.Status = PaymentStatus.Approved;
+                    _paymentService.Update(payment);
+                }
+            }
+            var oldShoppingCarts = _shoppingCartRepository.GetByUserId(order.ApplicationUserId).ToList();
+            _shoppingCartRepository.RemoveRange(oldShoppingCarts);
+
             return View(id);
         }
 
