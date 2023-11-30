@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Library.BusinessLogic\Library.BusinessLogic.csproj" />
     <ProjectReference Include="..\Library.DataAccess\Library.DataAccess.csproj" />
     <ProjectReference Include="..\Library.Utility\Library.Utility.csproj" />
   </ItemGroup>
