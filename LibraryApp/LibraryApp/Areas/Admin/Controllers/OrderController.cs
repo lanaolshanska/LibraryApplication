@@ -5,30 +5,38 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Areas.Admin.Controllers
 {
-    [Area(Role.Admin)]
-    [Authorize]
-    public class OrderController : Controller
-    {
-        private readonly IOrderService _orderService;
+	[Area(Role.Admin)]
+	[Authorize]
+	public class OrderController : Controller
+	{
+		private readonly IOrderService _orderService;
 
-        public OrderController(IOrderService orderService)
-        {
-            _orderService = orderService;
-        }
+		public OrderController(IOrderService orderService)
+		{
+			_orderService = orderService;
+		}
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+		public IActionResult Index()
+		{
+			var orderStatus = typeof(OrderStatus);
+			var statuses = orderStatus.GetFields()
+									  .Select(field => (string)field.GetValue(null))
+									  .ToList();
+			return View(statuses);
+		}
 
-        #region ApiCalls
+		#region ApiCalls
 
-        public IActionResult GetAll()
-        {
-            var orders = _orderService.GetAll();
-            return Json(new { data = orders });
-        }
+		public IActionResult GetAll(string? status)
+		{
+			var orders = _orderService.GetAll();
+			if (!string.IsNullOrEmpty(status))
+			{
+				orders = orders.Where(x => x.Status.ToLower() == status);
+			}
+			return Json(new { data = orders });
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

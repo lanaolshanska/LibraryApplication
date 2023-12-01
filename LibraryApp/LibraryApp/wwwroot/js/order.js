@@ -1,10 +1,17 @@
 ﻿$(document).ready(function () {
-    loadDataTable();
+    const url = new URL(window.location.href);
+    const searchParams = new URLSearchParams(url.search);
+    let status = searchParams.get('status');
+    loadDataTable(status);
 });
 
-function loadDataTable() {
+function loadDataTable(status) {
+    let url = '/admin/order/getall';
+    if (status != null) {
+        url = url + '?status=' + status
+    }  
     dataTable = $('#tblData').DataTable({
-        "ajax": { url: '/admin/order/getall' },
+        "ajax": { url: url },
         "ordering": false,
         "columns": [
             { data: 'userName', "width": "10%" },
