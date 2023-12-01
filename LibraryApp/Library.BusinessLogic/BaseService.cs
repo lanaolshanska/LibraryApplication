@@ -3,7 +3,7 @@ using Library.DataAccess.Repository.Interfaces;
 
 namespace Library.BusinessLogic
 {
-    public class BaseService<T> : IBaseService<T> where T : class
+    public abstract class BaseService<T> : IBaseService<T> where T : class
     {
         private IRepository<T> _repository;
 

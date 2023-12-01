@@ -1,12 +1,14 @@
 ﻿using Library.BusinessLogic.Interfaces;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
+using Library.Models.ViewModels;
 using Library.Utility;
 
 namespace Library.BusinessLogic
 {
     public class OrderService : BaseService<Order>, IOrderService
     {
+        private readonly IOrderRepository _orderRepository;
         private readonly IOrderProductRepository _orderProductRepository;
         private readonly IShipmentDetailRepository _shipmentRepository;
         private readonly IPaymentService _paymentService;
@@ -19,10 +21,26 @@ namespace Library.BusinessLogic
             IAddressService addressService
             ) : base(orderRepository)
         {
+            _orderRepository = orderRepository;
             _orderProductRepository = orderProductRepository;
             _shipmentRepository = shipmentRepository;
             _paymentService = paymentService;
             _addressService = addressService;
+        }
+
+
+        public new IEnumerable<OrderVM> GetAll()
+        {
+            var orders = _orderRepository.GetAll();
+            return orders.Select(order => new OrderVM
+            {
+                Id = order.Id,
+                UserName = order.ShipmentDetail.UserAddress.Name,
+                PhoneNumber = order.ShipmentDetail.UserAddress.PhoneNumber,
+                Email = order.ApplicationUser.Email,
+                Status = order.Status,
+                Total = order.Total
+            }).ToList();
         }
 
         public Order CreateOrder(ApplicationUser user, UserAddress address, List<ShoppingCart> shoppingCarts)
