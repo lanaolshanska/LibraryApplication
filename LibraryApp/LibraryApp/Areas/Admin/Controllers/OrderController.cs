@@ -25,6 +25,19 @@ namespace LibraryApp.Areas.Admin.Controllers
 			return View(statuses);
 		}
 
+		public IActionResult Details(int id)
+		{
+			var orderDetails = _orderService.GetDetailsById(id);
+			if (orderDetails != null)
+			{
+				return View(orderDetails);
+			}
+			else
+			{
+				return NotFound();
+			}
+		}
+
 		#region ApiCalls
 
 		public IActionResult GetAll(string? status)

@@ -12,11 +12,24 @@ namespace Library.DataAccess.Repository
 		}
 
 		public override IEnumerable<Order> GetAll()
-        {
+		{
 			return _dbSet
 				.Include(t => t.ApplicationUser)
 				.Include(t => t.ShipmentDetail)
 				.ThenInclude(x => x.UserAddress);
+		}
+
+		public Order? GetDetailsById(int id)
+		{
+			return _dbSet
+				.Include(t => t.ApplicationUser)
+				.Include(t => t.PaymentDetail)
+				.Include(t => t.Products)
+				.ThenInclude(x => x.Product)
+				.Include(t => t.ShipmentDetail)
+				.ThenInclude(x => x.UserAddress)
+				.Where(x => x.Id == id)
+				.FirstOrDefault();
 		}
 	}
 }

@@ -28,7 +28,6 @@ namespace Library.BusinessLogic
             _addressService = addressService;
         }
 
-
         public new IEnumerable<OrderVM> GetAll()
         {
             var orders = _orderRepository.GetAll();
@@ -41,6 +40,27 @@ namespace Library.BusinessLogic
                 Status = order.Status,
                 Total = order.Total
             }).ToList();
+        }
+
+        public OrderDetailsVM? GetDetailsById(int id)
+        {
+            var order = _orderRepository.GetDetailsById(id);
+            if (order != null)
+            {
+                var orderDetails = new OrderDetailsVM
+                {
+                    Id = order.Id,
+                    OrderDate = order.Date,
+                    OrderStatus = order.Status,
+                    Total = order.Total,
+                    PaymentDetail = order.PaymentDetail,
+                    Email = order.ApplicationUser.Email,
+                    ShipmentDetail = order.ShipmentDetail,
+                    Products = order.Products,
+                };
+                return orderDetails;
+            }
+            return null;
         }
 
         public Order CreateOrder(ApplicationUser user, UserAddress address, List<ShoppingCart> shoppingCarts)

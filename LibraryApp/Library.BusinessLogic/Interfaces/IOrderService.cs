@@ -7,5 +7,7 @@ namespace Library.BusinessLogic.Interfaces
     {
         new IEnumerable<OrderVM> GetAll();
         Order CreateOrder(ApplicationUser user, UserAddress address, List<ShoppingCart> shoppingCarts);
+        OrderDetailsVM? GetDetailsById(int id);
+
     }
 }
