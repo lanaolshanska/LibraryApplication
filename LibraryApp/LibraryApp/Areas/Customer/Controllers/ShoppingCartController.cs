@@ -112,12 +112,9 @@ namespace LibraryApp.Areas.Customer.Controllers
                 if(session.PaymentStatus.ToLower() == "paid")
                 {
                     _paymentService.UpdateStripePaymentDetails(payment.Id, session.Id, session.PaymentIntentId);
-                    
-                    order.Status = OrderStatus.Approved;
-                    _orderService.Update(order);
 
-                    payment.Status = PaymentStatus.Approved;
-                    _paymentService.Update(payment);
+                    _orderService.UpdateStatus(id, OrderStatus.Approved);
+                    _paymentService.UpdateStatus(payment.Id, PaymentStatus.Approved);
                 }
             }
             var oldShoppingCarts = _shoppingCartRepository.GetByUserId(order.ApplicationUserId).ToList();

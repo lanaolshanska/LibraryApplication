@@ -99,5 +99,12 @@ namespace Library.BusinessLogic
 
             return order;
         }
+
+        public void UpdateStatus(int id, string status)
+        {
+            var order = _orderRepository.GetById(id);
+            order.Status = status;
+            _orderRepository.Update(order);
+        }
     }
 }

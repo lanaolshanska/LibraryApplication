@@ -6,8 +6,11 @@ namespace Library.BusinessLogic
 {
     public class PaymentService : BaseService<PaymentDetail>, IPaymentService
     {
-        public PaymentService(IPaymentDetailRepository paymentDetailRepository) : base(paymentDetailRepository)
+        private IPaymentDetailRepository _paymentDetailRepository;
+
+		public PaymentService(IPaymentDetailRepository paymentDetailRepository) : base(paymentDetailRepository)
         {
+            _paymentDetailRepository = paymentDetailRepository;
         }
 
         public void UpdateStripePaymentDetails(int id, string sessionId, string paymentIntentId)
@@ -28,6 +31,11 @@ namespace Library.BusinessLogic
             }
         }
 
-
-    }
+		public void UpdateStatus(int id, string status)
+		{
+			var payment = _paymentDetailRepository.GetById(id);
+			payment.Status = status;
+			_paymentDetailRepository.Update(payment);
+		}
+	}
 }

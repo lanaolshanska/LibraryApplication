@@ -1,4 +1,5 @@
 ﻿using Library.Models;
+using Stripe;
 using Stripe.Checkout;
 
 namespace Library.BusinessLogic.Payments
@@ -42,5 +43,17 @@ namespace Library.BusinessLogic.Payments
             Session session = service.Create(options);
             return session;
         }
+
+        public void RefundPayment(string paymentIntentId)
+        {
+			var options = new RefundCreateOptions
+			{
+				Reason = RefundReasons.RequestedByCustomer,
+				PaymentIntent = paymentIntentId
+			};
+
+			var service = new RefundService();
+			var refund = service.Create(options);
+		}
     }
 }

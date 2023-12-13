@@ -6,5 +6,7 @@
 		public const string Approved = "Approved";
 		public const string Delayed = "ApprovedForDelayedPayment";
 		public const string Rejected = "Rejected";
+		public const string Refunded = "Refunded";
+		public const string Cancelled = "Cancelled";
 	}
 }
