@@ -11,14 +11,24 @@
 						<div class="card-body pb-0">
 							<div class="pl-1">
 								<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Title</p>
-								<p class="card-title text-warning text-center">by <strong>@product.Author</strong></p>
+								<p class="card-title text-warning text-center">by <span class="fw-bold text-warning">@product.Author</span></p>
 							</div>
 							<div class="my-2">
 								<p class="text-dark text-opacity-75 text-center mb-0">
 									Price:
-									<span>
-										@product.Price.ToString("c");
-									</span>
+									@if (ViewBag.CompanyId != null)
+									{
+										<span class="fw-bold">
+											@((product.Price - product.Price * Discount.CompanyUser).ToString("c"))
+										</span>
+										<span class="badge rounded-pill bg-warning">-@(Discount.CompanyUser*100)%</span>
+									}
+									else
+									{
+										<span class="fw-bold">
+											@product.Price.ToString("c")
+										</span>
+									}
 								</p>
 							</div>
 						</div>

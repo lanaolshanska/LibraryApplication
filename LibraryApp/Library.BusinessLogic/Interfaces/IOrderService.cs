@@ -9,5 +9,7 @@ namespace Library.BusinessLogic.Interfaces
         Order CreateOrder(ApplicationUser user, UserAddress address, List<ShoppingCart> shoppingCarts);
         OrderDetailsVM? GetDetailsById(int id);
         void UpdateStatus(int id, string status);
-    }
+        double CalculateDiscountOrderTotal(double orderTotal, double discount);
+
+	}
 }

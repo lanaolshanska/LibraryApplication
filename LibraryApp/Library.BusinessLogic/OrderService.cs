@@ -70,20 +70,25 @@ namespace Library.BusinessLogic
             var shipmentDetail = new ShipmentDetail { UserAddressId = addressId };
             _shipmentRepository.Create(shipmentDetail);
 
-            var paymentDetail = new PaymentDetail { Status = user.CompanyId.HasValue ? PaymentStatus.Delayed : PaymentStatus.Pending };
+            var paymentDetail = new PaymentDetail { Status = PaymentStatus.Pending };
             _paymentService.Create(paymentDetail);
 
             var order = new Order
             {
                 Date = DateTime.Now,
                 Total = shoppingCarts.Sum(x => x.Count * x.Product.Price),
-                Status = user.CompanyId.HasValue ? OrderStatus.Approved : OrderStatus.Pending,
+                Status = OrderStatus.Pending,
                 ApplicationUserId = user.Id,
                 ShipmentDetailId = shipmentDetail.Id,
                 PaymentDetailId = paymentDetail.Id
             };
 
-            Create(order);
+			if (user.CompanyId.HasValue && Discount.CompanyUser != 0)
+			{
+				order.Total = CalculateDiscountOrderTotal(order.Total, Discount.CompanyUser);
+			}
+
+			Create(order);
 
             shoppingCarts.ForEach(shoppingCart =>
             {
@@ -93,6 +98,7 @@ namespace Library.BusinessLogic
                     ProductId = shoppingCart.ProductId,
                     Count = shoppingCart.Count,
                     Price = shoppingCart.Product.Price,
+                    Discount = user.CompanyId.HasValue ? Discount.CompanyUser : 0
                 };
                 _orderProductRepository.Create(product);
             });
@@ -106,5 +112,10 @@ namespace Library.BusinessLogic
             order.Status = status;
             _orderRepository.Update(order);
         }
-    }
+
+        public double CalculateDiscountOrderTotal(double orderTotal, double discount)
+		{
+			return orderTotal - orderTotal * discount;
+		}
+	}
 }

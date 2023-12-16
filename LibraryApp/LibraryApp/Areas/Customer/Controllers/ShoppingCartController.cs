@@ -1,5 +1,4 @@
-﻿using Library.BusinessLogic;
-using Library.BusinessLogic.Interfaces;
+﻿using Library.BusinessLogic.Interfaces;
 using Library.BusinessLogic.Payments;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
@@ -13,177 +12,182 @@ using System.Security.Claims;
 
 namespace LibraryApp.Areas.Customer.Controllers
 {
-    [Area(Role.Customer)]
-    [Authorize]
-    public class ShoppingCartController : Controller
-    {
-        private readonly IShoppingCartRepository _shoppingCartRepository;
-        private readonly IApplicationUserRepository _userRepository;
-        private readonly IPaymentService _paymentService;
-        private readonly IAddressService _addressService;
-        private readonly IOrderService _orderService;
+	[Area(Role.Customer)]
+	[Authorize]
+	public class ShoppingCartController : Controller
+	{
+		private readonly IShoppingCartRepository _shoppingCartRepository;
+		private readonly IApplicationUserRepository _userRepository;
+		private readonly IPaymentService _paymentService;
+		private readonly IAddressService _addressService;
+		private readonly IOrderService _orderService;
 
-        public ShoppingCartController(IShoppingCartRepository shoppingCartRepository,
-                                    IApplicationUserRepository userRepository,
-                                    IPaymentService paymentService,
-                                    IAddressService addressService,
-                                    IOrderService orderService
-                                    )
-        {
-            _shoppingCartRepository = shoppingCartRepository;
-            _userRepository = userRepository;
-            _paymentService = paymentService;
-            _addressService = addressService;
-            _orderService = orderService;
-        }
+		public string UserId { get => GetApplicationUserId(); }
 
-        public IActionResult Index()
-        {
-            var userId = GetApplicationUserId();
-            var userShoppingCarts = _shoppingCartRepository.GetByUserId(userId);
+		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository,
+									IApplicationUserRepository userRepository,
+									IPaymentService paymentService,
+									IAddressService addressService,
+									IOrderService orderService
+									)
+		{
+			_shoppingCartRepository = shoppingCartRepository;
+			_userRepository = userRepository;
+			_paymentService = paymentService;
+			_addressService = addressService;
+			_orderService = orderService;
+		}
 
-            var shoppingCartModel = new ShoppingCartVM
-            {
-                ShoppingCartList = userShoppingCarts,
-                OrderTotal = userShoppingCarts.Sum(x => x.Count * x.Product.Price)
-            };
+		public IActionResult Index()
+		{
+			var userShoppingCarts = _shoppingCartRepository.GetByUserId(UserId);
+			var shoppingCartModel = new ShoppingCartVM
+			{
+				ShoppingCartList = userShoppingCarts,
+				OrderTotal = userShoppingCarts.Sum(x => x.Count * x.Product.Price),
+				ApplicationUser = _userRepository.GetById(UserId)
+			};
 
-            return View(shoppingCartModel);
-        }
+			if (shoppingCartModel.ApplicationUser.CompanyId.HasValue &&
+				Discount.CompanyUser != 0)
+			{
+				shoppingCartModel.OrderTotal = _orderService.CalculateDiscountOrderTotal(shoppingCartModel.OrderTotal, Discount.CompanyUser);
+			}
 
-        public IActionResult Summary()
-        {
-            var userId = GetApplicationUserId();
-            var products = _shoppingCartRepository.GetByUserId(userId);
+			return View(shoppingCartModel);
+		}
 
-            var primaryAddressId = _addressService.GetPrimaryUserAddress(userId)?.Id;
+		public IActionResult Summary()
+		{
+			var products = _shoppingCartRepository.GetByUserId(UserId);
+			var primaryAddressId = _addressService.GetPrimaryUserAddress(UserId)?.Id;
 
-            var summaryViewModel = new SummaryVM
-            {
-                ProductList = products,
-                OrderTotal = products.Sum(x => x.Count * x.Product.Price),
-                Address = new UserAddress { Id = primaryAddressId ?? 0 }
-            };
-            return View(summaryViewModel);
-        }
+			var summaryViewModel = new SummaryVM
+			{
+				ProductList = products,
+				OrderTotal = products.Sum(x => x.Count * x.Product.Price),
+				Address = new UserAddress { Id = primaryAddressId ?? 0 },
+				ApplicationUser = _userRepository.GetById(UserId)
+			};
+			if (summaryViewModel.ApplicationUser.CompanyId.HasValue &&
+				Discount.CompanyUser != 0)
+			{
+				summaryViewModel.OrderTotal = _orderService.CalculateDiscountOrderTotal(summaryViewModel.OrderTotal, Discount.CompanyUser);
+			}
+			return View(summaryViewModel);
+		}
 
-        [HttpPost]
-        public IActionResult CreateOrder(SummaryVM summaryViewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                var userId = GetApplicationUserId();
-                var user = _userRepository.GetById(userId);
-                var shoppingCarts = _shoppingCartRepository.GetByUserId(userId).ToList();
+		[HttpPost]
+		public IActionResult CreateOrder(SummaryVM summaryViewModel)
+		{
+			if (ModelState.IsValid)
+			{
+				var user = _userRepository.GetById(UserId);
+				var shoppingCarts = _shoppingCartRepository.GetByUserId(UserId).ToList();
 
-                var order = _orderService.CreateOrder(user, summaryViewModel.Address, shoppingCarts);
+				var order = _orderService.CreateOrder(user, summaryViewModel.Address, shoppingCarts);
 
-                if (!user.CompanyId.HasValue)
-                {
-                    var successUrl = $"Customer/ShoppingCart/OrderConfirmation?id={order.Id}";
-                    var cancelUrl = "Customer/ShoppingCart/Summary";
+				var successUrl = $"Customer/ShoppingCart/OrderConfirmation?id={order.Id}";
+				var cancelUrl = "Customer/ShoppingCart/Summary";
 
-                    var stripeService = new StripeService();
-                    var stripeSession = stripeService.CreateStripeSession(successUrl, cancelUrl, order.Products);
+				var stripeService = new StripeService();
+				var stripeSession = stripeService.CreateStripeSession(successUrl, cancelUrl, order.Products);
 
-                    _paymentService.UpdateStripePaymentDetails(order.PaymentDetailId, stripeSession.Id, stripeSession.PaymentIntentId);
-                    
-                    Response.Headers.Add("Location", stripeSession.Url);
-                    return new StatusCodeResult(303);
-                }
+				_paymentService.UpdateStripePaymentDetails(order.PaymentDetailId, stripeSession.Id, stripeSession.PaymentIntentId);
 
-                return RedirectToAction(nameof(OrderConfirmation), new
-                {
-                    id = order.Id
-                });
-            }
-            TempData["errorMessage"] = "Address is not valid!";
-            return RedirectToAction(nameof(Summary));
-        }
+				Response.Headers.Add("Location", stripeSession.Url);
+				return new StatusCodeResult(303);
 
-        public IActionResult OrderConfirmation(int id)
-        {
-            var order = _orderService.GetById(id);
-            var payment = _paymentService.GetById(order.PaymentDetailId);
-            if(payment.Status != PaymentStatus.Delayed)
-            {
-                var sessionService = new SessionService();
-                var session = sessionService.Get(payment.SessionId);
-                if(session.PaymentStatus.ToLower() == "paid")
-                {
-                    _paymentService.UpdateStripePaymentDetails(payment.Id, session.Id, session.PaymentIntentId);
+			}
+			TempData["errorMessage"] = "Address is not valid!";
+			return RedirectToAction(nameof(Summary));
+		}
 
-                    _orderService.UpdateStatus(id, OrderStatus.Approved);
-                    _paymentService.UpdateStatus(payment.Id, PaymentStatus.Approved);
-                }
-            }
-            var oldShoppingCarts = _shoppingCartRepository.GetByUserId(order.ApplicationUserId).ToList();
-            _shoppingCartRepository.RemoveRange(oldShoppingCarts);
+		public IActionResult OrderConfirmation(int id)
+		{
+			var order = _orderService.GetById(id);
+			var payment = _paymentService.GetById(order.PaymentDetailId);
+			if (payment.Status != PaymentStatus.Delayed)
+			{
+				var sessionService = new SessionService();
+				var session = sessionService.Get(payment.SessionId);
+				if (session.PaymentStatus.ToLower() == "paid")
+				{
+					_paymentService.UpdateStripePaymentDetails(payment.Id, session.Id, session.PaymentIntentId);
+					_orderService.UpdateStatus(id, OrderStatus.Approved);
+					_paymentService.UpdateStatus(payment.Id, PaymentStatus.Approved);
+				}
+			}
+			var oldShoppingCarts = _shoppingCartRepository.GetByUserId(order.ApplicationUserId).ToList();
+			_shoppingCartRepository.RemoveRange(oldShoppingCarts);
 
-            return View(id);
-        }
+			return View(id);
+		}
 
-        public IActionResult Plus(int id)
-        {
-            var order = _shoppingCartRepository.GetById(id);
-            if (order != null)
-            {
-                order.Count++;
-                _shoppingCartRepository.Update(order);
-            }
-            return RedirectToAction(nameof(Index));
-        }
+		public IActionResult Plus(int id)
+		{
+			var order = _shoppingCartRepository.GetById(id);
+			if (order != null)
+			{
+				order.Count++;
+				_shoppingCartRepository.Update(order);
+			}
+			return RedirectToAction(nameof(Index));
+		}
 
-        public IActionResult Minus(int id)
-        {
-            var order = _shoppingCartRepository.GetById(id);
-            if (order != null)
-            {
-                if (order.Count > 1)
-                {
-                    order.Count--;
-                    _shoppingCartRepository.Update(order);
-                }
-                else
-                {
-                    _shoppingCartRepository.Delete(id);
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
+		public IActionResult Minus(int id)
+		{
+			var order = _shoppingCartRepository.GetById(id);
+			if (order != null)
+			{
+				if (order.Count > 1)
+				{
+					order.Count--;
+					_shoppingCartRepository.Update(order);
+				}
+				else
+				{
+					_shoppingCartRepository.Delete(id);
+				}
+			}
+			return RedirectToAction(nameof(Index));
+		}
 
-        public IActionResult Delete(int id)
-        {
-            var order = _shoppingCartRepository.GetById(id);
-            if (order != null)
-            {
-                _shoppingCartRepository.Delete(id);
-            }
-            return RedirectToAction(nameof(Index));
-        }
+		public IActionResult Delete(int id)
+		{
+			var order = _shoppingCartRepository.GetById(id);
+			if (order != null)
+			{
+				_shoppingCartRepository.Delete(id);
+			}
+			return RedirectToAction(nameof(Index));
+		}
 
-        private string GetApplicationUserId()
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return userId;
-        }
+		private string GetApplicationUserId()
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			if (claimsIdentity.IsAuthenticated)
+			{
+				return claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			}
+			return string.Empty;
+		}
 
-        #region ApiCalls
+		#region ApiCalls
 
-        [HttpGet]
-        public IActionResult GetAddress(int id)
-        {
-            var address = _addressService.GetById(id);
-            if (address != null)
-            {
-                return Json(new { success = true, address = address });
-            }
-            else
-            {
-                return Json(new { success = false, message = "Can not retrieve address!" });
-            }
-        }
-        #endregion
-    }
+		[HttpGet]
+		public IActionResult GetAddress(int id)
+		{
+			var address = _addressService.GetById(id);
+			if (address != null)
+			{
+				return Json(new { success = true, address = address });
+			}
+			else
+			{
+				return Json(new { success = false, message = "Can not retrieve address!" });
+			}
+		}
+		#endregion
+	}
 }

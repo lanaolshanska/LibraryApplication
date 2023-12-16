@@ -2,76 +2,95 @@ namespace LibraryApp.Areas.Customer.Controllers
 {
 	using Library.DataAccess.Repository.Interfaces;
 	using Library.Models;
-    using Library.Utility;
+	using Library.Utility;
 	using Microsoft.AspNetCore.Authorization;
 	using Microsoft.AspNetCore.Mvc;
-    using System.Diagnostics;
+	using System.Diagnostics;
 	using System.Security.Claims;
 
 	[Area(Role.Customer)]
-    public class HomeController : Controller
-    {
+	public class HomeController : Controller
+	{
 		private readonly IProductRepository _productRepository;
 		private readonly IShoppingCartRepository _shoppingCartRepository;
+		private readonly IApplicationUserRepository _userRepository;
 
-		public HomeController(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository)
-        {
-            _productRepository = productRepository;
-            _shoppingCartRepository = shoppingCartRepository;
+		public string UserId { get => GetApplicationUserId(); }
+
+		public HomeController(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository, IApplicationUserRepository userRepository)
+		{
+			_productRepository = productRepository;
+			_shoppingCartRepository = shoppingCartRepository;
+			_userRepository = userRepository;
 		}
 
-        public IActionResult Index()
-        {
-            var products = _productRepository.GetAll();
-            return View(products);
-        }
+		public IActionResult Index()
+		{
+			if (!string.IsNullOrEmpty(UserId) && Discount.CompanyUser != 0)
+			{
+				var user = _userRepository.GetById(UserId);
+				ViewBag.CompanyId = user.CompanyId;
+			}
+
+			var products = _productRepository.GetAll();
+			return View(products);
+		}
 
 		public IActionResult Details(int id)
 		{
-            var shoppingCart = new ShoppingCart
-            {
+			var shoppingCart = new ShoppingCart
+			{
 				ProductId = id,
-				Product = _productRepository.GetAll().FirstOrDefault(p => p.Id == id)
+				Product = _productRepository.GetAll().FirstOrDefault(p => p.Id == id),
+				ApplicationUser = !string.IsNullOrEmpty(UserId) ? _userRepository.GetById(UserId) : null
 			};
 			return View(shoppingCart);
 		}
 
-        [HttpPost]
-        [Authorize]
+		[HttpPost]
+		[Authorize]
 		public IActionResult Details(ShoppingCart shoppingCart)
 		{
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-			shoppingCart.ApplicationUserId = userId;
+			shoppingCart.ApplicationUserId = UserId;
 
-			var userShoppingCart = _shoppingCartRepository.GetWhere(x => 
-                x.ApplicationUserId == userId && 
-                x.ProductId == shoppingCart.ProductId)
-                .FirstOrDefault();
+			var userShoppingCart = _shoppingCartRepository.GetWhere(x =>
+				x.ApplicationUserId == UserId &&
+				x.ProductId == shoppingCart.ProductId)
+				.FirstOrDefault();
 
-            if(userShoppingCart == null)
-            {
+			if (userShoppingCart == null)
+			{
 				_shoppingCartRepository.Create(shoppingCart);
-            }
-            else
-            {
+			}
+			else
+			{
 				userShoppingCart.Count += shoppingCart.Count;
 				_shoppingCartRepository.Update(userShoppingCart);
 
 			}
-            TempData["successMessage"] = "Cart updated successfully!";
+			TempData["successMessage"] = "Cart updated successfully!";
 			return RedirectToAction(nameof(Index));
 		}
 
 		public IActionResult Privacy()
-        {
-            return View();
-        }
+		{
+			return View();
+		}
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-    }
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		public IActionResult Error()
+		{
+			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+		}
+
+		private string GetApplicationUserId()
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			if (claimsIdentity.IsAuthenticated)
+			{
+				return claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+			}
+			return string.Empty;
+		}
+	}
 }

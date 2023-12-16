@@ -42,11 +42,27 @@
 									<h5>Price:</h5>
 								</div>
 							</div>
-							<div class="p-1 col-3 col-lg-2 ">
-								<div>
-									<h5>@Model.Product.Price.ToString("c")</h5>
+							@if (Model.ApplicationUser != null && 
+								Model.ApplicationUser.CompanyId.HasValue &&
+								Discount.CompanyUser != 0)
+							{
+								<div class="p-1 col-3 col-lg-2">
+									<div><p class="text-warning fw-bold">@((Model.Product.Price - Model.Product.Price * Discount.CompanyUser).ToString("c"))</p></div>
 								</div>
-							</div>
+								<div class="p-1 col-3 col-lg-2">
+									<div>
+										<p class="fw-light fst-italic text-decoration-line-through">
+											<small>@Model.Product.Price.ToString("c")</small>
+										</p>
+									</div>
+								</div>
+							}
+							else
+							{
+								<div class="p-1 col-3 col-lg-2">
+									<div><h5>@Model.Product.Price.ToString("c")</h5></div>
+								</div>
+							}
 						</div>
 						<div class="row">
 							<div class="col-6 col-md-6 pb-1">

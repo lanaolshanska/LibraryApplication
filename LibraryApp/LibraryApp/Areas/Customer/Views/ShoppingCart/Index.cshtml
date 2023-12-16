@@ -11,11 +11,7 @@
 					</div>
 				</div>
 			</div>
-
-
 			<div class="card-body my-4">
-				<div class="row">
-				</div>
 				<div class="row mb-3 pb-3">
 					<div class="col-md-10 offset-md-1">
 						<div class="row border-bottom pb-3">
@@ -24,18 +20,32 @@
 								<div class="d-none d-lg-block col-lg-1 text-center py-2">
 									<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
 								</div>
-								<div class="col-12 col-lg-6 pt-md-3">
+								<div class="col-lg-5 pt-md-3">
 									<h5 class="text-uppercase text-secondary"><strong>@order.Product.Title</strong></h5>
 								</div>
-								<div class="col-12  col-lg-5 text-center row">
-									<div class="col-4 text-md-right pt-2 pt-md-4">
-										<h6 class="fw-semibold">
-											@order.Product.Price.ToString("c")
-											<span class="text-muted">&nbsp;x&nbsp;</span>@order.Count
-										</h6>
+								<div class="col-lg-6 text-center row">
+									<div class="col-4 text-md-right">
+										@if (Model.ApplicationUser.CompanyId.HasValue &&
+											Discount.CompanyUser != 0)
+										{
+											<h6 class="fw-semibold">
+												<h6 class="fw-light fst-italic text-decoration-line-through">
+													@order.Product.Price.ToString("c")
+												</h6>
+												@((order.Product.Price - order.Product.Price * Discount.CompanyUser).ToString("c"))
+												<span class="text-muted">&nbsp;x&nbsp;</span>@order.Count
+											</h6>
+										}
+										else
+										{
+											<h6 class="fw-semibold pt-3">
+												@order.Product.Price.ToString("c")
+												<span class="text-muted">&nbsp;x&nbsp;</span>@order.Count
+											</h6>
+										}
 									</div>
-									<div class="col-5 col-sm-4 col-lg-5 pt-2">
-										<div class="w-75 btn-group" role="group">
+									<div class="col-6 pt-2">
+										<div class="btn-group" role="group">
 											<a asp-action="Plus" asp-route-id="@order.Id" class="btn btn-outline-primary bg-gradient py-2">
 												<i class="bi bi-plus-square"></i>
 											</a> &nbsp;
@@ -43,9 +53,8 @@
 												<i class="bi bi-dash-square"></i>
 											</a>
 										</div>
-
 									</div>
-									<div class="col-3 col-sm-4 col-lg-2 offset-lg-1 text-right pt-2">
+									<div class="col-2 text-right pt-2">
 										<a asp-action="Delete" asp-route-id="@order.Id" class="btn btn-danger bg-gradient py-2 ">
 											<i class="bi bi-trash-fill"></i>
 										</a>

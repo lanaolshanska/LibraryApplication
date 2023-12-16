@@ -104,9 +104,18 @@
 											<h6 class="my-0">@order.Product.Title</h6>
 											<small class="text-muted">Quantity: @order.Count</small>
 										</div>
-										<div class="col-3 text-end">
-											<span class="text-muted">@order.Product.Price * @order.Count</span>
-										</div>
+										@if (Model.ApplicationUser.CompanyId.HasValue && Discount.CompanyUser != 0)
+										{
+											<div class="col-3 text-end">
+												<span class="text-muted">@(order.Product.Price - order.Product.Price * Discount.CompanyUser) * @order.Count</span>
+											</div>
+										}
+										else
+										{
+											<div class="col-3 text-end">
+												<span class="text-muted">@order.Product.Price * @order.Count</span>
+											</div>
+										}
 									</li>
 								}
 								<li class="list-group-item d-flex justify-content-between bg-light">
