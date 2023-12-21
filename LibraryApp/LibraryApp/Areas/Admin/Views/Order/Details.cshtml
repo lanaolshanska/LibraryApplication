@@ -140,11 +140,23 @@
 											</div>
 											<div class="col-7">
 												<h6 class="my-0 text-primary">@order.Product.Title</h6>
-												<small class="text-muted">Price : @order.Price</small><br />
+												<small class="text-muted">
+													Price :
+													@if (order.Discount != 0)
+													{
+														@(order.Price - order.Price * order.Discount)
+														<span class="badge rounded-pill bg-light text-muted">(-@(order.Discount * 100)%)</span>
+													}
+													else
+													{
+														@order.Price
+													}
+												</small>
+												<br />
 												<small class="text-muted">Quantity : @order.Count</small>
 											</div>
 											<div class="col-3 text-end">
-												<p class="text-success">@((order.Count * @order.Price).ToString("c"))</p>
+												<p class="text-success">@((order.Count * (order.Price - order.Price * order.Discount)).ToString("c"))</p>
 											</div>
 										</div>
 									</li>
@@ -170,7 +182,7 @@
 								<button id="shipmentModalButton" class="btn btn-warning form-control my-1">Ship Order</button>
 							}
 							@if (Model.OrderStatus != OrderStatus.Shipped &&
-								Model.OrderStatus != OrderStatus.Cancelled)
+												Model.OrderStatus != OrderStatus.Cancelled)
 							{
 								<button type="submit" asp-action="CancelOrder" class="btn btn-danger form-control my-1">Cancel Order</button>
 							}
