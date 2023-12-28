@@ -179,7 +179,7 @@
 							}
 							@if (Model.OrderStatus == OrderStatus.Processing)
 							{
-								<button id="shipmentModalButton" class="btn btn-warning form-control my-1">Ship Order</button>
+								<button onclick="loadShipmentModal(event, @Model.Id)" class="btn btn-warning form-control my-1">Ship Order</button>
 							}
 							@if (Model.OrderStatus != OrderStatus.Shipped &&
 												Model.OrderStatus != OrderStatus.Cancelled)
@@ -234,7 +234,7 @@
 		</div>
 	</div>
 </form>
-@* @section Scripts {
-	<script src="~/js/orderModal.js"></script>
+<div id="modalContainer"></div>
+@section Scripts {
+	<script src="~/js/orderDetails.js"></script>
 }
- *@

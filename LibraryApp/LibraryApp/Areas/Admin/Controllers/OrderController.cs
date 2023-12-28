@@ -13,14 +13,16 @@ namespace LibraryApp.Areas.Admin.Controllers
 	{
 		private readonly IOrderService _orderService;
 		private readonly IPaymentService _paymentService;
+		private readonly IShipmentDetailService _shipmentDetailService;
 
 		[BindProperty]
 		public OrderDetailsVM OrderDetails { get; set; }
 
-		public OrderController(IOrderService orderService, IPaymentService paymentService)
+		public OrderController(IOrderService orderService, IPaymentService paymentService, IShipmentDetailService shipmentDetailService)
 		{
 			_orderService = orderService;
 			_paymentService = paymentService;
+			_shipmentDetailService = shipmentDetailService;
 		}
 
 		public IActionResult Index()
@@ -32,6 +34,7 @@ namespace LibraryApp.Areas.Admin.Controllers
 			return View(statuses);
 		}
 
+		[HttpGet]
 		public IActionResult Details(int id)
 		{
 			var orderDetails = _orderService.GetDetailsById(id);
@@ -43,6 +46,21 @@ namespace LibraryApp.Areas.Admin.Controllers
 			{
 				return NotFound();
 			}
+		}
+
+		[HttpPost]
+		public IActionResult UpdateShipmentDetails(ShipmentDetailVM shipmentDetail)
+		{
+			if (!string.IsNullOrEmpty(shipmentDetail.Carrier) &&
+				!string.IsNullOrEmpty(shipmentDetail.TrackingNumber))
+			{
+				var shipmentDetailId = _shipmentDetailService.UpdateShipmentDetail(shipmentDetail);
+				if (shipmentDetailId != null)
+				{
+					_orderService.UpdateStatus(shipmentDetail.OrderId, OrderStatus.Shipped);
+				}
+			}
+			return RedirectToAction(nameof(Details), new { id = shipmentDetail.OrderId });
 		}
 
 		[HttpPost]
@@ -73,13 +91,14 @@ namespace LibraryApp.Areas.Admin.Controllers
 			return RedirectToAction(nameof(Details), new { id = order.Id });
 		}
 
-		//public IActionResult GetShipmentModal()
-		//{
-		//	return PartialView("_ShipmentModal");
-		//}
+		[HttpGet]
+		public IActionResult GetShipmentModal(int orderId)
+		{
+			return PartialView("_ShipmentModal", orderId);
+		}
 
 		#region ApiCalls
-
+		[HttpGet]
 		public IActionResult GetAll(string? status)
 		{
 			var orders = _orderService.GetAll();
