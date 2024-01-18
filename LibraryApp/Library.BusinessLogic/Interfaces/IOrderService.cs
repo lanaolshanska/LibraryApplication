@@ -10,6 +10,7 @@ namespace Library.BusinessLogic.Interfaces
         OrderDetailsVM? GetDetailsById(int id);
         void UpdateStatus(int id, string status);
         double CalculateDiscountOrderTotal(double orderTotal, double discount);
+        IEnumerable<Order> GetOrdersByCustomerId(string customerId);
 
 	}
 }

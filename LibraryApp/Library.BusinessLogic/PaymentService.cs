@@ -1,17 +1,30 @@
 ﻿using Library.BusinessLogic.Interfaces;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
+using Library.Utility;
+using Stripe.Checkout;
 
 namespace Library.BusinessLogic
 {
     public class PaymentService : BaseService<PaymentDetail>, IPaymentService
     {
-        private IPaymentDetailRepository _paymentDetailRepository;
+        private readonly IPaymentDetailRepository _paymentDetailRepository;
 
 		public PaymentService(IPaymentDetailRepository paymentDetailRepository) : base(paymentDetailRepository)
         {
             _paymentDetailRepository = paymentDetailRepository;
         }
+
+        public void ApprovePayment(int paymentId, string sessionId)
+        {
+			var sessionService = new SessionService();
+			var session = sessionService.Get(sessionId);
+			if (session != null && session.PaymentStatus.ToLower() == "paid")
+			{
+				UpdateStripePaymentDetails(paymentId, session.Id, session.PaymentIntentId);
+				UpdateStatus(paymentId, PaymentStatus.Approved);
+			}
+		}
 
         public void UpdateStripePaymentDetails(int id, string sessionId, string paymentIntentId)
         {

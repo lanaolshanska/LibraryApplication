@@ -42,6 +42,11 @@ namespace Library.BusinessLogic
 			}).ToList();
 		}
 
+		public IEnumerable<Order> GetOrdersByCustomerId(string customerId)
+		{
+			return _orderRepository.GetOrdersByCustomerId(customerId);
+		}
+
 		public OrderDetailsVM? GetDetailsById(int id)
 		{
 			var order = _orderRepository.GetDetailsById(id);

@@ -107,16 +107,12 @@ namespace LibraryApp.Areas.Customer.Controllers
 		{
 			var order = _orderService.GetById(id);
 			var payment = _paymentService.GetById(order.PaymentDetailId);
-			if (payment.Status != PaymentStatus.Delayed)
+
+			if (payment.Status != PaymentStatus.Delayed &&
+				!string.IsNullOrEmpty(payment.SessionId))
 			{
-				var sessionService = new SessionService();
-				var session = sessionService.Get(payment.SessionId);
-				if (session.PaymentStatus.ToLower() == "paid")
-				{
-					_paymentService.UpdateStripePaymentDetails(payment.Id, session.Id, session.PaymentIntentId);
-					_orderService.UpdateStatus(id, OrderStatus.Approved);
-					_paymentService.UpdateStatus(payment.Id, PaymentStatus.Approved);
-				}
+				_paymentService.ApprovePayment(payment.Id, payment.SessionId);
+				_orderService.UpdateStatus(id, OrderStatus.Approved);
 			}
 			var oldShoppingCarts = _shoppingCartRepository.GetByUserId(order.ApplicationUserId).ToList();
 			_shoppingCartRepository.RemoveRange(oldShoppingCarts);

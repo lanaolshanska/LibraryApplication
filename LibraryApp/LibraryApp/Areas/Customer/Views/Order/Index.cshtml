@@ -1,0 +1,62 @@
+﻿@model List<Order>
+
+<div class="container">
+	@if (Model.Count() > 0)
+	{
+		<table class="table table-bordered">
+			<tbody>
+				@foreach (var order in Model)
+				{
+					var orderStatusStyle = "bg-dark";
+					switch (order.Status)
+					{
+						case OrderStatus.Approved:
+							orderStatusStyle = "bg-success";
+							break;
+						case OrderStatus.Shipped:
+							orderStatusStyle = "bg-warning";
+							break;
+						case OrderStatus.Pending:
+						case OrderStatus.Processing:
+							orderStatusStyle = "bg-info";
+							break;
+						case OrderStatus.Cancelled:
+							orderStatusStyle = "bg-danger";
+							break;
+
+					}
+					<tr>
+						<td>Order #@order.Id</td>
+						<td>@order.Date.ToShortDateString()</td>
+						<td>@order.Total.ToString("c")</td>
+						<td>
+							<span class="badge @orderStatusStyle">@order.Status</span>
+						</td>
+						<td>
+							<div class="w-75 btn-group" role="group">
+								<a asp-controller="Order" asp-action="Details" asp-route-id="@order.Id" class="btn btn-primary mx-2">
+									<i class="bi bi-pencil-square"></i> View Details
+								</a>
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+	else
+	{
+		<div class="card shadow border-0 my-auto">
+			<div class="row">
+				<div class="col-12 text-center py-5">
+					<h5 class="text-dark text-uppercase">You don't have any orders yet!</h5>
+				</div>
+			</div>
+			<div class="col-6 pb-5 offset-md-3">
+				<a asp-controller="Home" asp-action="Index" class="btn btn-primary w-100 py-2 text-uppercase fw-semibold">
+					<small>Continue Shopping</small>
+				</a>
+			</div>
+		</div>
+	}
+</div>

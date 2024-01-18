@@ -31,5 +31,10 @@ namespace Library.DataAccess.Repository
 				.Where(x => x.Id == id)
 				.FirstOrDefault();
 		}
+
+		public IEnumerable<Order> GetOrdersByCustomerId(string customerId)
+		{
+			return _dbSet.Where(x => x.ApplicationUserId == customerId);
+		}
 	}
 }
