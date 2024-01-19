@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
-using Library.Utility;
+using Library.Utility.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryApp.Areas.Identity.Pages.Account
 {
-	public class RegisterModel : PageModel
+    public class RegisterModel : PageModel
 	{
 		private readonly SignInManager<IdentityUser> _signInManager;
 		private readonly UserManager<IdentityUser> _userManager;

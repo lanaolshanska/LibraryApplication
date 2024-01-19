@@ -3,10 +3,10 @@ using Library.DataAccess.Repository;
 using Library.DataAccess.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Library.Utility;
 using Stripe;
 using Library.BusinessLogic.Interfaces;
 using Library.BusinessLogic;
+using Library.Utility.Constants;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +25,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 	options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options => {
+	options.IdleTimeout = TimeSpan.FromMinutes(100);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
 
 builder.Services.AddRazorPages();
 
@@ -58,11 +66,10 @@ StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey"
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.MapRazorPages();
 app.MapControllerRoute(
 	name: "default",

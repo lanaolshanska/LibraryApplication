@@ -1,7 +1,7 @@
 ﻿using Library.BusinessLogic.Interfaces;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
-using Library.Utility;
+using Library.Utility.Constants;
 using Stripe.Checkout;
 
 namespace Library.BusinessLogic

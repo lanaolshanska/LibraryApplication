@@ -2,11 +2,11 @@
 {
     using Library.DataAccess.Repository.Interfaces;
     using Library.Models;
-    using Library.Utility;
+    using Library.Utility.Constants;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-	[Area(Role.Admin)]
+    [Area(Role.Admin)]
     [Authorize(Roles=Role.Admin)]
 	public class CategoryController : Controller
     {

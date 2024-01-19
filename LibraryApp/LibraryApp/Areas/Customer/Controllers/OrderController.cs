@@ -5,14 +5,14 @@ using Library.DataAccess.Repository;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
-using Library.Utility;
+using Library.Utility.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace LibraryApp.Areas.Customer.Controllers
 {
-	[Area(Role.Customer)]
+    [Area(Role.Customer)]
 	[Authorize]
 	public class OrderController : Controller
 	{

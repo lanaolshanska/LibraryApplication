@@ -2,11 +2,11 @@
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
-using Library.Utility;
+using Library.Utility.Constants;
 
 namespace Library.BusinessLogic
 {
-	public class OrderService : BaseService<Order>, IOrderService
+    public class OrderService : BaseService<Order>, IOrderService
 	{
 		private readonly IOrderRepository _orderRepository;
 		private readonly IOrderProductRepository _orderProductRepository;

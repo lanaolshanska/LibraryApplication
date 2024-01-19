@@ -1,13 +1,13 @@
 ﻿using Library.BusinessLogic.Interfaces;
 using Library.BusinessLogic.Payments;
 using Library.Models.ViewModels;
-using Library.Utility;
+using Library.Utility.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.Areas.Admin.Controllers
 {
-	[Area(Role.Admin)]
+    [Area(Role.Admin)]
 	[Authorize]
 	public class OrderController : Controller
 	{

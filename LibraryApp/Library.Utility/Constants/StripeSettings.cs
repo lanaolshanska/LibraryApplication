@@ -1,4 +1,4 @@
-﻿namespace Library.Utility
+﻿namespace Library.Utility.Constants
 {
     public class StripeSettings
     {

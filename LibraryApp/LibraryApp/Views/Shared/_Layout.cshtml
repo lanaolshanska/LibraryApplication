@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -55,7 +58,8 @@
 						}
 						<li class="nav-item">
 							<a class="nav-link" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index">
-								<i class="bi bi-cart"></i> &nbsp;
+								<i class="bi bi-cart"></i>
+								(@(HttpContextAccessor.HttpContext.Session.GetInt32(Session.ShoppingCart) ?? 0))
 							</a>
 						</li>
 					</ul>

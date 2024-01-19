@@ -1,14 +1,14 @@
 namespace LibraryApp.Areas.Customer.Controllers
 {
-	using Library.DataAccess.Repository.Interfaces;
-	using Library.Models;
-	using Library.Utility;
-	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.AspNetCore.Mvc;
-	using System.Diagnostics;
-	using System.Security.Claims;
+    using Library.DataAccess.Repository.Interfaces;
+    using Library.Models;
+    using Library.Utility.Constants;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Diagnostics;
+    using System.Security.Claims;
 
-	[Area(Role.Customer)]
+    [Area(Role.Customer)]
 	public class HomeController : Controller
 	{
 		private readonly IProductRepository _productRepository;
@@ -26,10 +26,15 @@ namespace LibraryApp.Areas.Customer.Controllers
 
 		public IActionResult Index()
 		{
-			if (!string.IsNullOrEmpty(UserId) && Discount.CompanyUser != 0)
+			if (!string.IsNullOrEmpty(UserId))
 			{
 				var user = _userRepository.GetById(UserId);
-				ViewBag.CompanyId = user.CompanyId;
+				SetShoppingCartSession();
+
+				if (Discount.CompanyUser != 0)
+				{
+					ViewBag.CompanyId = user.CompanyId;
+				}
 			}
 
 			var products = _productRepository.GetAll();
@@ -66,8 +71,8 @@ namespace LibraryApp.Areas.Customer.Controllers
 			{
 				userShoppingCart.Count += shoppingCart.Count;
 				_shoppingCartRepository.Update(userShoppingCart);
-
 			}
+			SetShoppingCartSession();
 			TempData["successMessage"] = "Cart updated successfully!";
 			return RedirectToAction(nameof(Index));
 		}
@@ -91,6 +96,12 @@ namespace LibraryApp.Areas.Customer.Controllers
 				return claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 			}
 			return string.Empty;
+		}
+
+		private void SetShoppingCartSession()
+		{
+			HttpContext.Session.SetInt32(Session.ShoppingCart,
+				_shoppingCartRepository.GetByUserId(UserId).Sum(x => x.Count));
 		}
 	}
 }

@@ -3,16 +3,15 @@ using Library.BusinessLogic.Payments;
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
-using Library.Utility;
+using Library.Utility.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace LibraryApp.Areas.Customer.Controllers
 {
-	[Area(Role.Customer)]
+    [Area(Role.Customer)]
 	[Authorize]
 	public class ShoppingCartController : Controller
 	{
@@ -116,6 +115,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			}
 			var oldShoppingCarts = _shoppingCartRepository.GetByUserId(order.ApplicationUserId).ToList();
 			_shoppingCartRepository.RemoveRange(oldShoppingCarts);
+			SetShoppingCartSession();
 
 			return View(id);
 		}
@@ -127,6 +127,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			{
 				order.Count++;
 				_shoppingCartRepository.Update(order);
+				SetShoppingCartSession();
 			}
 			return RedirectToAction(nameof(Index));
 		}
@@ -145,6 +146,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 				{
 					_shoppingCartRepository.Delete(id);
 				}
+				SetShoppingCartSession();
 			}
 			return RedirectToAction(nameof(Index));
 		}
@@ -155,6 +157,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			if (order != null)
 			{
 				_shoppingCartRepository.Delete(id);
+				SetShoppingCartSession();
 			}
 			return RedirectToAction(nameof(Index));
 		}
@@ -183,6 +186,11 @@ namespace LibraryApp.Areas.Customer.Controllers
 			{
 				return Json(new { success = false, message = "Can not retrieve address!" });
 			}
+		}
+		private void SetShoppingCartSession()
+		{
+			HttpContext.Session.SetInt32(Session.ShoppingCart,
+				_shoppingCartRepository.GetByUserId(UserId).Sum(x => x.Count));
 		}
 		#endregion
 	}
