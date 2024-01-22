@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryApp.Areas.Identity.Pages.Account
 {
-    public class RegisterModel : PageModel
+	public class RegisterModel : PageModel
 	{
 		private readonly SignInManager<IdentityUser> _signInManager;
 		private readonly UserManager<IdentityUser> _userManager;
@@ -127,7 +127,7 @@ namespace LibraryApp.Areas.Identity.Pages.Account
 
 				await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
 				await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-				
+
 				if (Input.Role == Role.Company) user.CompanyId = Input.CompanyId;
 				var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -156,7 +156,14 @@ namespace LibraryApp.Areas.Identity.Pages.Account
 					}
 					else
 					{
-						await _signInManager.SignInAsync(user, isPersistent: false);
+						if (User.IsInRole(Role.Admin))
+						{
+							TempData["successMessage"] = "New User Created Successfully";
+						}
+						else
+						{
+							await _signInManager.SignInAsync(user, isPersistent: false);
+						}
 						return LocalRedirect(returnUrl);
 					}
 				}

@@ -28,7 +28,7 @@
 						<li class="nav-item">
 							<a class="nav-link" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
 						</li>
-						@if (User.IsInRole(Role.Customer))
+						@if (!User.IsInRole(Role.Admin))
 						{
 							<li class="nav-item">
 								<a class="nav-link" asp-area="Customer" asp-controller="Order" asp-action="Index">Orders</a>
@@ -52,6 +52,9 @@
 									</li>
 									<li class="nav-item">
 										<a class="dropdown-item" asp-area="Admin" asp-controller="Order" asp-action="Index">Order</a>
+									</li>
+									<li class="nav-item">
+										<a class="dropdown-item" asp-area="Identity" asp-page="/Account/Register">User Management</a>
 									</li>
 								</ul>
 							</li>
