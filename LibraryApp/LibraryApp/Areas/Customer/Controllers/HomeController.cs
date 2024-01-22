@@ -29,8 +29,6 @@ namespace LibraryApp.Areas.Customer.Controllers
 			if (!string.IsNullOrEmpty(UserId))
 			{
 				var user = _userRepository.GetById(UserId);
-				SetShoppingCartSession();
-
 				if (Discount.CompanyUser != 0)
 				{
 					ViewBag.CompanyId = user.CompanyId;
