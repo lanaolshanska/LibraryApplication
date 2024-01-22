@@ -7,6 +7,7 @@ using Stripe;
 using Library.BusinessLogic.Interfaces;
 using Library.BusinessLogic;
 using Library.Utility.Constants;
+using Microsoft.Extensions.DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,10 +26,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 	options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
-
-
+builder.Services.AddAuthentication().AddFacebook(option =>
+{
+	option.AppId = builder.Configuration.GetSection("Facebook:AppId").Get<string>();
+	option.AppSecret = builder.Configuration.GetSection("Facebook:AppSecret").Get<string>();
+});
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options => {
+builder.Services.AddSession(options =>
+{
 	options.IdleTimeout = TimeSpan.FromMinutes(100);
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
