@@ -111,7 +111,7 @@ namespace LibraryApp.Areas.Identity.Pages.Account
 		public async Task OnGetAsync(string returnUrl = null)
 		{
 			Input = new InputModel();
-			await SetRoles();
+			SetRoleList();
 			SetCompanyList();
 			ReturnUrl = returnUrl;
 			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -200,14 +200,8 @@ namespace LibraryApp.Areas.Identity.Pages.Account
 			return (IUserEmailStore<IdentityUser>)_userStore;
 		}
 
-		private async Task SetRoles()
+		private void SetRoleList()
 		{
-			if (!(await _roleManager.RoleExistsAsync(Role.Admin)))
-			{
-				await _roleManager.CreateAsync(new IdentityRole(Role.Admin));
-				await _roleManager.CreateAsync(new IdentityRole(Role.Company));
-				await _roleManager.CreateAsync(new IdentityRole(Role.Customer));
-			}
 			Input.RoleList = _roleManager.Roles.Select(x => new SelectListItem(x.Name, x.Name));
 		}
 

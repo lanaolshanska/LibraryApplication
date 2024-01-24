@@ -7,7 +7,7 @@ using Stripe;
 using Library.BusinessLogic.Interfaces;
 using Library.BusinessLogic;
 using Library.Utility.Constants;
-using Microsoft.Extensions.DependencyInjection;
+using Library.DataAccess.DBInitializer;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +57,8 @@ builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShipmentDetailService, ShipmentDetailService>();
 
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -79,5 +81,11 @@ app.MapRazorPages();
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+
+using (var scope = app.Services.CreateScope())
+{
+	var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+	await dbInitializer.Initialize();
+}
 
 app.Run();
