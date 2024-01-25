@@ -16,7 +16,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 	public class ShoppingCartController : Controller
 	{
 		private readonly IShoppingCartRepository _shoppingCartRepository;
-		private readonly IApplicationUserRepository _userRepository;
+		private readonly IUserService _userService;
 		private readonly IPaymentService _paymentService;
 		private readonly IAddressService _addressService;
 		private readonly IOrderService _orderService;
@@ -24,14 +24,14 @@ namespace LibraryApp.Areas.Customer.Controllers
 		public string UserId { get => GetApplicationUserId(); }
 
 		public ShoppingCartController(IShoppingCartRepository shoppingCartRepository,
-									IApplicationUserRepository userRepository,
+									IUserService userService,
 									IPaymentService paymentService,
 									IAddressService addressService,
 									IOrderService orderService
 									)
 		{
 			_shoppingCartRepository = shoppingCartRepository;
-			_userRepository = userRepository;
+			_userService = userService;
 			_paymentService = paymentService;
 			_addressService = addressService;
 			_orderService = orderService;
@@ -44,7 +44,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			{
 				ShoppingCartList = userShoppingCarts,
 				OrderTotal = userShoppingCarts.Sum(x => x.Count * x.Product.Price),
-				ApplicationUser = _userRepository.GetById(UserId)
+				ApplicationUser = _userService.GetById(UserId)
 			};
 
 			if (shoppingCartModel.ApplicationUser.CompanyId.HasValue &&
@@ -66,7 +66,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 				ProductList = products,
 				OrderTotal = products.Sum(x => x.Count * x.Product.Price),
 				Address = new UserAddress { Id = primaryAddressId ?? 0 },
-				ApplicationUser = _userRepository.GetById(UserId)
+				ApplicationUser = _userService.GetById(UserId)
 			};
 			if (summaryViewModel.ApplicationUser.CompanyId.HasValue &&
 				Discount.CompanyUser != 0)
@@ -81,7 +81,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				var user = _userRepository.GetById(UserId);
+				var user = _userService.GetById(UserId);
 				var shoppingCarts = _shoppingCartRepository.GetByUserId(UserId).ToList();
 
 				var order = _orderService.CreateOrder(user, summaryViewModel.Address, shoppingCarts);

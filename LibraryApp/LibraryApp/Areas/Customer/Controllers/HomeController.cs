@@ -1,34 +1,37 @@
 namespace LibraryApp.Areas.Customer.Controllers
 {
-    using Library.DataAccess.Repository.Interfaces;
-    using Library.Models;
-    using Library.Utility.Constants;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Diagnostics;
-    using System.Security.Claims;
+	using Library.BusinessLogic.Interfaces;
+	using Library.DataAccess.Repository.Interfaces;
+	using Library.Models;
+	using Library.Utility.Constants;
+	using Microsoft.AspNetCore.Authorization;
+	using Microsoft.AspNetCore.Mvc;
+	using System.Diagnostics;
+	using System.Security.Claims;
 
-    [Area(Role.Customer)]
+	[Area(Role.Customer)]
 	public class HomeController : Controller
 	{
 		private readonly IProductRepository _productRepository;
 		private readonly IShoppingCartRepository _shoppingCartRepository;
-		private readonly IApplicationUserRepository _userRepository;
+		private readonly IUserService _userService;
 
 		public string UserId { get => GetApplicationUserId(); }
 
-		public HomeController(IProductRepository productRepository, IShoppingCartRepository shoppingCartRepository, IApplicationUserRepository userRepository)
+		public HomeController(IProductRepository productRepository,
+			IShoppingCartRepository shoppingCartRepository,
+			IUserService userService)
 		{
 			_productRepository = productRepository;
 			_shoppingCartRepository = shoppingCartRepository;
-			_userRepository = userRepository;
+			_userService = userService;
 		}
 
 		public IActionResult Index()
 		{
 			if (!string.IsNullOrEmpty(UserId))
 			{
-				var user = _userRepository.GetById(UserId);
+				var user = _userService.GetById(UserId);
 				if (user != null && Discount.CompanyUser != 0)
 				{
 					ViewBag.CompanyId = user.CompanyId;
@@ -45,7 +48,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			{
 				ProductId = id,
 				Product = _productRepository.GetAll().FirstOrDefault(p => p.Id == id),
-				ApplicationUser = !string.IsNullOrEmpty(UserId) ? _userRepository.GetById(UserId) : null
+				ApplicationUser = !string.IsNullOrEmpty(UserId) ? _userService.GetById(UserId) : null
 			};
 			return View(shoppingCart);
 		}
