@@ -8,6 +8,7 @@ namespace Library.BusinessLogic
 	public class UserService : BaseService<ApplicationUser>, IUserService
 	{
 		private readonly IApplicationUserRepository _userRepository;
+
 		public UserService(IApplicationUserRepository userRepository) : base(userRepository)
 		{
 			_userRepository = userRepository;
@@ -23,8 +24,14 @@ namespace Library.BusinessLogic
 				Email = user.Email,
 				Name = user.Addresses?.Where(x => x.IsPrimary == true).FirstOrDefault()?.Name ?? string.Empty,
 				PhoneNumber = user.Addresses?.Where(x => x.IsPrimary == true).FirstOrDefault()?.PhoneNumber ?? string.Empty,
-				CompanyName = user.Company?.Name ?? string.Empty
+				CompanyName = user.Company?.Name ?? string.Empty,
+				LockoutEnd = user.LockoutEnd
 			}).ToList();
+		}
+
+		public ApplicationUser? GetById(string id)
+		{
+			return _userRepository.GetById(id);
 		}
 	}
 }

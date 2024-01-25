@@ -8,5 +8,6 @@
 		public string Name { get; set; }
 		public string PhoneNumber { get; set; }
 		public string CompanyName { get; set; }
+		public DateTimeOffset? LockoutEnd { get; set; }
 	}
 }
