@@ -56,6 +56,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShipmentDetailService, ShipmentDetailService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 

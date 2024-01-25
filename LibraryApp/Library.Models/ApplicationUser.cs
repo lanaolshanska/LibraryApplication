@@ -12,5 +12,7 @@ namespace Library.Models
 		[ValidateNever]
 		public Company? Company { get; set; }
 		public List<UserAddress>? Addresses { get; set; }
+		[NotMapped]
+		public string Role {  get; set; }
 	}
 }
