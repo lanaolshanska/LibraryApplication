@@ -2,6 +2,8 @@
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
+using Library.Utility.Constants;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Library.BusinessLogic
@@ -9,10 +11,13 @@ namespace Library.BusinessLogic
 	public class UserService : BaseService<ApplicationUser>, IUserService
 	{
 		private readonly IApplicationUserRepository _userRepository;
+		private readonly UserManager<IdentityUser> _userManager;
 
-		public UserService(IApplicationUserRepository userRepository) : base(userRepository)
+		public UserService(IApplicationUserRepository userRepository, UserManager<IdentityUser> userManager) : base(userRepository)
 		{
 			_userRepository = userRepository;
+			_userManager = userManager;
+
 		}
 
 		public new IEnumerable<UserVM> GetAll()
@@ -50,6 +55,31 @@ namespace Library.BusinessLogic
 					RoleList = roles.Select(x => new SelectListItem(x, x)).ToList()
 				};
 				return roleManagementVm;
+			}
+			return null;
+		}
+
+		public async Task<string?> UpdateRole(RoleManagementVM roleManagementDetails)
+		{
+			var identityUser = await _userManager.FindByIdAsync(roleManagementDetails.UserId);
+			if (identityUser != null)
+			{
+				var user = GetById(identityUser.Id);
+				var previousRole = _userRepository.GetUserRole(user.Id);
+				if (roleManagementDetails.Role == Role.Company)
+				{
+					user.CompanyId = roleManagementDetails.CompanyId;
+					Update(user);
+				}
+				else
+				{
+					if (previousRole == Role.Company) user.CompanyId = null;
+					Update(user);
+				}
+				
+				await _userManager.RemoveFromRoleAsync(identityUser, previousRole);
+				await _userManager.AddToRoleAsync(identityUser, roleManagementDetails.Role);
+				return user.Id;
 			}
 			return null;
 		}

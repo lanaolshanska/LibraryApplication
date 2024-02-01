@@ -52,7 +52,7 @@ namespace Library.DataAccess.Repository
 			return (null, null, null);
 		}
 
-		private string GetUserRole(string userId)
+		public string GetUserRole(string userId)
 		{
 			var roleId = _db.UserRoles.First(x => x.UserId == userId).RoleId;
 			return _db.Roles.Find(roleId).Name;

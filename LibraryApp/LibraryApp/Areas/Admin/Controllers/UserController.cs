@@ -1,8 +1,10 @@
 ﻿using Library.BusinessLogic.Interfaces;
+using Library.Models.ViewModels;
 using Library.Utility.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace LibraryApp.Areas.Admin.Controllers
 {
@@ -32,6 +34,21 @@ namespace LibraryApp.Areas.Admin.Controllers
 				return View(roleManagementDetails);
 			}
 			return NotFound();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> RoleManagement(RoleManagementVM roleManagementDetails)
+		{
+			var userId = await _userService.UpdateRole(roleManagementDetails);
+			if(userId != null) 
+			{
+				TempData["successMessage"] = "User was successfully updated!";
+			}
+			else
+			{
+				TempData["errorMessage"] = "Something went wrong!";
+			}
+			return RedirectToAction(nameof(Index));
 		}
 
 		#region ApiCalls
