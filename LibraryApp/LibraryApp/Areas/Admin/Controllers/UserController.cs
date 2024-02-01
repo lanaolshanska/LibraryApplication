@@ -2,6 +2,7 @@
 using Library.Utility.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LibraryApp.Areas.Admin.Controllers
 {
@@ -15,10 +16,22 @@ namespace LibraryApp.Areas.Admin.Controllers
 			_userService = userService;
 		}
 
+		[HttpGet]
 		public IActionResult Index()
 		{
 			var users = _userService.GetAll();
 			return View(users);
+		}
+
+		[HttpGet]
+		public IActionResult RoleManagement(string userId)
+		{
+			var roleManagementDetails = _userService.GetRoleManagementDetails(userId);
+			if(roleManagementDetails != null)
+			{
+				return View(roleManagementDetails);
+			}
+			return NotFound();
 		}
 
 		#region ApiCalls

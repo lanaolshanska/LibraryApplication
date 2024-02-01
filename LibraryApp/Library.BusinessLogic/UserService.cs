@@ -2,6 +2,7 @@
 using Library.DataAccess.Repository.Interfaces;
 using Library.Models;
 using Library.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Library.BusinessLogic
 {
@@ -32,6 +33,25 @@ namespace Library.BusinessLogic
 		public ApplicationUser? GetById(string id)
 		{
 			return _userRepository.GetById(id);
+		}
+
+		public RoleManagementVM? GetRoleManagementDetails(string userId)
+		{
+			var (user, roles, companies) = _userRepository.GetRoleManagementDetails(userId);
+			if (user != null)
+			{
+				var roleManagementVm = new RoleManagementVM
+				{
+					UserId = userId,
+					Email = user.Email,
+					Role = user.Role,
+					CompanyId = user.Company?.Id,
+					CompanyList = companies.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList(),
+					RoleList = roles.Select(x => new SelectListItem(x, x)).ToList()
+				};
+				return roleManagementVm;
+			}
+			return null;
 		}
 	}
 }

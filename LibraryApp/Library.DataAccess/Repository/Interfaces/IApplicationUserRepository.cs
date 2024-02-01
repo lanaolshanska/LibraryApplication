@@ -4,6 +4,7 @@ namespace Library.DataAccess.Repository.Interfaces
 {
 	public interface IApplicationUserRepository : IRepository<ApplicationUser>
 	{
-		public ApplicationUser GetById(string id);
+		ApplicationUser GetById(string id);
+		(ApplicationUser?, List<string>, IEnumerable<Company>) GetRoleManagementDetails(string userId);
 	}
 }
