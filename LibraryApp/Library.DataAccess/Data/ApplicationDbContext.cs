@@ -22,6 +22,7 @@
 		public DbSet<UserAddress> UserAddress { get; set; }
 		public DbSet<ShipmentDetail> ShipmentDetail { get; set; }
 		public DbSet<PaymentDetail> PaymentDetail { get; set; }
+		public DbSet<ProductImage> ProductImage { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -48,7 +49,6 @@
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "SWD9999001",
 					Price = 90,
-					ImageUrl = "",
 					CategoryId = 1
 				},
 				new Product
@@ -59,7 +59,6 @@
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "CAW777777701",
 					Price = 30,
-					ImageUrl = "",
 					CategoryId = 2
 				},
 				new Product
@@ -70,7 +69,6 @@
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "RITO5555501",
 					Price = 50,
-					ImageUrl = "",
 					CategoryId = 3
 				},
 				new Product
@@ -81,7 +79,6 @@
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "WS3333333301",
 					Price = 65,
-					ImageUrl = "",
 					CategoryId = 1
 				},
 				new Product
@@ -92,7 +89,6 @@
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "SOTJ1111111101",
 					Price = 27,
-					ImageUrl = "",
 					CategoryId = 2
 				},
 				new Product
@@ -103,7 +99,6 @@
 					Description = "Praesent vitae sodales libero. Praesent molestie orci augue, vitae euismod velit sollicitudin ac. Praesent vestibulum facilisis nibh ut ultricies.\r\n\r\nNunc malesuada viverra ipsum sit amet tincidunt. ",
 					ISBN = "FOT000000001",
 					Price = 23,
-					ImageUrl = "",
 					CategoryId = 3
 				}
 			);
