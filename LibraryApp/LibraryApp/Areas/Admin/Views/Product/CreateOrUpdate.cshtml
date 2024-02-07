@@ -39,13 +39,13 @@
 				<span asp-validation-for="@Model.Product.ISBN" class="text-danger"></span>
 			</div>
 			<div class="mb-3 row p-1">
-				<label asp-for="@Model.Product.ImageUrl" class="p-0"></label>
-				<input asp-for="@Model.Product.ImageUrl" hidden />
-				<input type="file" name="file" class="form-control" />
+				<label asp-for="@Model.Product.Images" class="p-0"></label>
+				<input asp-for="@Model.Product.Images" hidden />
+				<input type="file" name="files" class="form-control" multiple />
 			</div>
-			<div>
+@* 			<div>
 				<img src="~/@Model.Product.ImageUrl" style="max-height:200px; max-width:200px; margin-bottom:2rem;"/>
-			</div>
+			</div> *@
 			<div class="row">
 				<div class="col-6 col-md-3">
 					<button type="submit" class="btn btn-primary form-control">Save</button>

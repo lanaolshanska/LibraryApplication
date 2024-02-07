@@ -51,12 +51,14 @@ builder.Services.AddScoped<IShipmentDetailRepository, ShipmentDetailRepository>(
 builder.Services.AddScoped<IPaymentDetailRepository, PaymentDetailRepository>();
 builder.Services.AddScoped<IOrderProductRepository, OrderProductRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShipmentDetailService, ShipmentDetailService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
