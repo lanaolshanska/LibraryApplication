@@ -12,17 +12,17 @@ namespace LibraryApp.Areas.Customer.Controllers
 	[Area(Role.Customer)]
 	public class HomeController : Controller
 	{
-		private readonly IProductRepository _productRepository;
+		private readonly IProductService _productService;
 		private readonly IShoppingCartRepository _shoppingCartRepository;
 		private readonly IUserService _userService;
 
 		public string UserId { get => GetApplicationUserId(); }
 
-		public HomeController(IProductRepository productRepository,
+		public HomeController(IProductService productService,
 			IShoppingCartRepository shoppingCartRepository,
 			IUserService userService)
 		{
-			_productRepository = productRepository;
+			_productService = productService;
 			_shoppingCartRepository = shoppingCartRepository;
 			_userService = userService;
 		}
@@ -38,7 +38,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 				}
 			}
 
-			var products = _productRepository.GetAll();
+			var products = _productService.GetAll();
 			return View(products);
 		}
 
@@ -47,7 +47,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			var shoppingCart = new ShoppingCart
 			{
 				ProductId = id,
-				Product = _productRepository.GetAll().FirstOrDefault(p => p.Id == id),
+				Product = _productService.GetAll().FirstOrDefault(p => p.Id == id),
 				ApplicationUser = !string.IsNullOrEmpty(UserId) ? _userService.GetById(UserId) : null
 			};
 			return View(shoppingCart);

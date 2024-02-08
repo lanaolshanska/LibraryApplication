@@ -58,6 +58,7 @@ builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShipmentDetailService, ShipmentDetailService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, Library.BusinessLogic.ProductService>();
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
