@@ -17,16 +17,19 @@
 						<div class="row border-bottom pb-3">
 							@foreach (var order in Model.ShoppingCartList)
 							{
-								@* <div class="d-none d-lg-block col-lg-1 text-center py-2">
-									<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
-								</div> *@
+								@if (!string.IsNullOrEmpty(order.Product.ImageUrl))
+								{
+									<div class="d-none d-lg-block col-lg-1 text-center py-2">
+										<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
+									</div>
+								}
 								<div class="col-lg-5 pt-md-3">
 									<h5 class="text-uppercase text-secondary"><strong>@order.Product.Title</strong></h5>
 								</div>
 								<div class="col-lg-6 text-center row">
 									<div class="col-4 text-md-right">
 										@if (Model.ApplicationUser.CompanyId.HasValue &&
-											Discount.CompanyUser != 0)
+																		Discount.CompanyUser != 0)
 										{
 											<h6 class="fw-semibold">
 												<h6 class="fw-light fst-italic text-decoration-line-through">

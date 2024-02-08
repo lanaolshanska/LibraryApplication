@@ -6,7 +6,7 @@
 			<hr />
 		</div>
 		<div class="mb-3 row p-1">
-			<input asp-for="@Model.Product.Id" hidden/>
+			<input asp-for="@Model.Product.Id" hidden />
 			<div class="mb-3 row p-1">
 				<label asp-for="@Model.Product.Title" class="p-0"></label>
 				<input asp-for="@Model.Product.Title" class="form-control" />
@@ -43,9 +43,15 @@
 				<input asp-for="@Model.Product.Images" hidden />
 				<input type="file" name="files" class="form-control" multiple />
 			</div>
-@* 			<div>
-				<img src="~/@Model.Product.ImageUrl" style="max-height:200px; max-width:200px; margin-bottom:2rem;"/>
-			</div> *@
+			<div class="row">
+				@if (Model.Product.Images != null)
+				{
+					@foreach (var image in Model.Product.Images)
+					{
+						<img src="~/@image.ImageUrl" style="max-height:200px; max-width:200px; margin-bottom:2rem; margin-right:2rem;" />
+					}
+				}
+			</div>
 			<div class="row">
 				<div class="col-6 col-md-3">
 					<button type="submit" class="btn btn-primary form-control">Save</button>

@@ -97,9 +97,12 @@
 								@foreach (var order in Model.ProductList)
 								{
 									<li class="list-group-item d-flex row">
-										@* <div class="d-none d-lg-block col-2 text-center">
-											<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
-										</div> *@
+										@if (!string.IsNullOrEmpty(order.Product.ImageUrl))
+										{
+											<div class="d-none d-lg-block col-2 text-center">
+												<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
+											</div>
+										}
 										<div class="col-7">
 											<h6 class="my-0">@order.Product.Title</h6>
 											<small class="text-muted">Quantity: @order.Count</small>
