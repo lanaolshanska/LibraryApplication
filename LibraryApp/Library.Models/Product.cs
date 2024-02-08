@@ -25,6 +25,7 @@
 		public Category Category { get; set; }
 		[ValidateNever]
 		public List<ProductImage> Images { get; set; }
+		public string? ImageUrl { get; set; }
 
 	}
 }
