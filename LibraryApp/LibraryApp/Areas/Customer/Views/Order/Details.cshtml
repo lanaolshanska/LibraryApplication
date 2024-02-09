@@ -126,12 +126,16 @@
 								{
 									<li class="list-group-item d-flex justify-content-between p-2">
 										<div class="row container">
-											@if (order.Product.Images?.Count() > 0)
-											{
-												<div class="d-none d-lg-block col-2 text-center">
+											<div class="d-none d-lg-block col-2 text-center">
+												@if (order.Product.Images?.Count() > 0)
+												{
 													<img src="~/@order.Product.Images.First().ImageUrl" class="rounded" width="100%" />
-												</div>
-											}
+												}
+												else
+												{
+													<img src="https://placehold.co/500x600/png" class="rounded" width="100%" />
+												}
+											</div>
 											<div class="col-7">
 												<h6 class="my-0 text-primary">@order.Product.Title</h6>
 												<small class="text-muted">

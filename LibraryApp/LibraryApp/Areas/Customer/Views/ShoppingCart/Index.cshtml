@@ -17,12 +17,16 @@
 						@foreach (var order in Model.ShoppingCartList)
 						{
 							<div class="row pb-3">
-								@if (order.Product.Images?.Count() > 0)
-								{
-									<div class="d-none d-lg-block col-lg-1 text-center py-2">
+								<div class="d-none d-lg-block col-lg-1 text-center py-2">
+									@if (order.Product.Images?.Count() > 0)
+									{
 										<img src="~/@order.Product.Images.First().ImageUrl" class="rounded" width="100%" />
-									</div>
-								}
+									}
+									else
+									{
+										<img src="https://placehold.co/500x600/png" class="rounded" width="100%" />
+									}
+								</div>
 								<div class="col-lg-5 pt-md-3">
 									<h5 class="text-uppercase text-secondary"><strong>@order.Product.Title</strong></h5>
 								</div>

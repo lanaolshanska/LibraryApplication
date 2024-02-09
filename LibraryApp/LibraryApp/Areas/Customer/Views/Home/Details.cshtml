@@ -14,12 +14,17 @@
 		<div class="card-body">
 			<div class="py-3">
 				<div class="row">
-					@if (Model.Product.Images?.Count() > 0)
-					{
-						<div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+
+					<div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+						@if (Model.Product.Images?.Count() > 0)
+						{
 							<img src="~/@Model.Product.Images.First().ImageUrl" width="100%" class="rounded" />
-						</div>
-					}
+						}
+						else
+						{
+							<img src="https://placehold.co/500x600/png" class="rounded" width="100%" />
+						}
+					</div>
 					<div class="col-12 col-lg-6 offset-lg-1">
 
 						<div class="col-12 col-md-6 pb-4">
