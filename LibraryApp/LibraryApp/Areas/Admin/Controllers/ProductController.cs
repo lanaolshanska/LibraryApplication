@@ -86,7 +86,7 @@
 			var image = _productImageService.GetById(id);
 			if (image != null)
 			{
-				_productImageService.DeleteImage(image);
+				_productImageService.DeleteProductImage(image);
 				return RedirectToAction(nameof(CreateOrUpdate), new { id = image.ProductId });
 			}
 			return NotFound();
@@ -109,12 +109,11 @@
 			{
 				return Json(new { success = false, message = "Item for deleting not found!" });
 			}
-
-			//if (!string.IsNullOrEmpty(product.ImageUrl))
-			//	DeleteOldFile(product.ImageUrl);
-
-			_productService.Delete(id);
-			return Json(new { success = true, message = "Item was deleted!" });
+			else
+			{
+				_productService.Delete(product);
+				return Json(new { success = true, message = "Item was deleted!" });
+			}
 		}
 	}
 

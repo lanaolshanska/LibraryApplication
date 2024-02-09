@@ -8,6 +8,7 @@ namespace Library.BusinessLogic.Interfaces
 		IEnumerable<ProductImage> GetProductImages(int productId);
 		void SaveImages(List<IFormFile> files, int productId);
 		void SetCover(ProductImage image);
-		void DeleteImage(ProductImage image);
+		void DeleteProductImage(ProductImage image);
+		void DeleteAllProductImages(List<ProductImage>? images);
 	}
 }

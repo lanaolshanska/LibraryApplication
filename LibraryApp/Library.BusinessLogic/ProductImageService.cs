@@ -35,12 +35,18 @@ namespace Library.BusinessLogic
 					ProductId = productId
 				});
 			}
+			var productImages = GetProductImages(productId).ToList();
+			var productCover = productImages.Where(x => x.IsCover).FirstOrDefault();
+			if (productCover == null)
+			{
+				UpdateNextCover(productImages);
+			};
 		}
 
 		public void SetCover(ProductImage image)
 		{
-			var previousCover = _repository.GetProductImages(image.ProductId)
-										.Where(x => x.IsCover).FirstOrDefault();
+			var previousCover = GetProductImages(image.ProductId)
+								.Where(x => x.IsCover).FirstOrDefault();
 			if (previousCover != null)
 			{
 				previousCover.IsCover = false;
@@ -50,7 +56,33 @@ namespace Library.BusinessLogic
 			Update(image);
 		}
 
-		public void DeleteImage(ProductImage image)
+		public void DeleteProductImage(ProductImage image)
+		{
+			if (image.IsCover == true)
+			{
+				var productImages = GetProductImages(image.ProductId)
+									.Where(x => x.Id != image.Id).ToList();
+				UpdateNextCover(productImages);
+			}
+			DeleteImage(image);
+		}
+
+		public void DeleteAllProductImages(List<ProductImage>? images)
+		{
+			images?.ForEach(x => DeleteImage(x));
+		}
+
+		private void UpdateNextCover(List<ProductImage>? productImages)
+		{
+			var newCover = productImages?.First();
+			if (newCover != null)
+			{
+				newCover.IsCover = true;
+				Update(newCover);
+			}
+		}
+
+		private void DeleteImage(ProductImage image)
 		{
 			Delete(image.Id);
 			var fileHelper = new FileHelper();
