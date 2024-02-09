@@ -9,5 +9,10 @@ namespace Library.DataAccess.Repository
 		public ProductImageRepository(ApplicationDbContext db) : base(db)
 		{
 		}
+
+		public IEnumerable<ProductImage> GetProductImages(int productId)
+		{
+			return _dbSet.Where(x => x.ProductId == productId);
+		}
 	}
 }

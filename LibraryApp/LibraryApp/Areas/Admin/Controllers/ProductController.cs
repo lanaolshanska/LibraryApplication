@@ -1,5 +1,6 @@
 ﻿namespace LibraryApp.Areas.Admin.Controllers
 {
+	using Library.BusinessLogic;
 	using Library.BusinessLogic.Interfaces;
 	using Library.DataAccess.Repository.Interfaces;
 	using Library.Models;
@@ -13,16 +14,16 @@
 	public class ProductController : Controller
 	{
 		private readonly IProductService _productService;
+		private readonly IProductImageService _productImageService;
 		private readonly ICategoryRepository _categoryRepository;
-		private readonly IProductImageRepository _productImageRepository;
 
 		public ProductController(IProductService productService,
-			ICategoryRepository categoryRepository,
-			IProductImageRepository productImageRepository)
+			IProductImageService productImageService,
+			ICategoryRepository categoryRepository)
 		{
 			_productService = productService;
 			_categoryRepository = categoryRepository;
-			_productImageRepository = productImageRepository;
+			_productImageService = productImageService;
 		}
 
 		public IActionResult Index()
@@ -59,21 +60,37 @@
 
 				if (files != null)
 				{
-					_productService.SaveFiles(files, productVm.Product);
+					_productImageService.SaveImages(files, productVm.Product.Id);
 				}
 			}
 			productVm.Categories = _categoryRepository.GetCategoriesList();
+			productVm.Product.Images = _productImageService.GetProductImages(productVm.Product.Id).ToList();
 			return View(productVm);
 		}
 
-		//private void DeleteOldFile(string imageUrl)
-		//{
-		//	var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
-		//	if (System.IO.File.Exists(oldFilePath))
-		//	{
-		//		System.IO.File.Delete(oldFilePath);
-		//	}
-		//}
+		[HttpPost]
+		public IActionResult SetCover(int id)
+		{
+			var image = _productImageService.GetById(id);
+			if (image != null)
+			{
+				_productImageService.SetCover(image);
+				return RedirectToAction(nameof(CreateOrUpdate), new { id = image.ProductId });
+			}
+			return NotFound();
+		}
+
+		[HttpPost]
+		public IActionResult DeleteImage(int id)
+		{
+			var image = _productImageService.GetById(id);
+			if (image != null)
+			{
+				_productImageService.DeleteImage(image);
+				return RedirectToAction(nameof(CreateOrUpdate), new { id = image.ProductId });
+			}
+			return NotFound();
+		}
 
 		#region ApiCalls
 
