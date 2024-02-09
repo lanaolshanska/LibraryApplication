@@ -15,6 +15,7 @@ namespace Library.DataAccess.Repository
         {
             return _dbSet
                 .Include(t => t.Product)
+                .ThenInclude(t => t.Images.Where(x => x.IsCover))
                 .Where(x => x.ApplicationUserId == userId)
                 .ToList();
         }

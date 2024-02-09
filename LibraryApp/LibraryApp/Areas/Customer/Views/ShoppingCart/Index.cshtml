@@ -14,13 +14,13 @@
 			<div class="card-body my-4">
 				<div class="row mb-3 pb-3">
 					<div class="col-md-10 offset-md-1">
-						<div class="row border-bottom pb-3">
-							@foreach (var order in Model.ShoppingCartList)
-							{
-								@if (!string.IsNullOrEmpty(order.Product.ImageUrl))
+						@foreach (var order in Model.ShoppingCartList)
+						{
+							<div class="row pb-3">
+								@if (order.Product.Images?.Count() > 0)
 								{
 									<div class="d-none d-lg-block col-lg-1 text-center py-2">
-										<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
+										<img src="~/@order.Product.Images.First().ImageUrl" class="rounded" width="100%" />
 									</div>
 								}
 								<div class="col-lg-5 pt-md-3">
@@ -63,8 +63,8 @@
 										</a>
 									</div>
 								</div>
-							}
-						</div>
+							</div>
+						}
 					</div>
 				</div>
 				<div class="card-footer bg-white border-0">

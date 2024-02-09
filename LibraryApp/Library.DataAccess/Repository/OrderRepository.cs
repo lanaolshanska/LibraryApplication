@@ -26,6 +26,7 @@ namespace Library.DataAccess.Repository
 				.Include(t => t.PaymentDetail)
 				.Include(t => t.Products)
 				.ThenInclude(x => x.Product)
+				.ThenInclude(x => x.Images.Where(x => x.IsCover))
 				.Include(t => t.ShipmentDetail)
 				.ThenInclude(x => x.UserAddress)
 				.Where(x => x.Id == id)

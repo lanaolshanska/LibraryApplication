@@ -34,8 +34,8 @@ namespace Library.BusinessLogic
 					ImageUrl = filePath,
 					ProductId = product.Id
 				});
-				product.ImageUrl = filePath;
 			}
+			product.Images.Last().IsCover = true;
 			Update(product);
 		}
 	}

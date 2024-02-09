@@ -37,7 +37,6 @@ namespace LibraryApp.Areas.Customer.Controllers
 					ViewBag.CompanyId = user.CompanyId;
 				}
 			}
-
 			var products = _productService.GetAll();
 			return View(products);
 		}
@@ -47,7 +46,7 @@ namespace LibraryApp.Areas.Customer.Controllers
 			var shoppingCart = new ShoppingCart
 			{
 				ProductId = id,
-				Product = _productService.GetAll().FirstOrDefault(p => p.Id == id),
+				Product = _productService.GetById(id),
 				ApplicationUser = !string.IsNullOrEmpty(UserId) ? _userService.GetById(UserId) : null
 			};
 			return View(shoppingCart);
@@ -76,11 +75,6 @@ namespace LibraryApp.Areas.Customer.Controllers
 			SetShoppingCartSession();
 			TempData["successMessage"] = "Cart updated successfully!";
 			return RedirectToAction(nameof(Index));
-		}
-
-		public IActionResult Privacy()
-		{
-			return View();
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

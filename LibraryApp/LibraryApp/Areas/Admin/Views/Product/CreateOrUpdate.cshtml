@@ -44,11 +44,26 @@
 				<input type="file" name="files" class="form-control" multiple />
 			</div>
 			<div class="row">
-				@if (Model.Product.Images != null)
+				@if (Model.Product.Images?.Count() > 0)
 				{
 					@foreach (var image in Model.Product.Images)
 					{
-						<img src="~/@image.ImageUrl" style="max-height:200px; max-width:200px; margin-bottom:2rem; margin-right:2rem;" />
+						<div class="col-md-3 mb-3">
+							<div class="card">
+								<img src="~/@image.ImageUrl" style="max-height:200px; max-width:200px; display: block; margin: auto;">
+								<div class="card-body" style="display: block; margin: auto;">
+									@if (image.IsCover)
+									{
+										<label class="btn btn-primary btn-sm disabled">Book Cover <i class="bi bi-bookmark-heart-fill"></i></label>
+									}
+									else
+									{
+										<button asp-action="SetCover" asp-route-id="@image.Id" class="btn btn-info btn-sm">Set as Cover <i class="bi bi-bookmark"></i></button>
+									}
+									<button asp-action="DeleteImage" asp-route-id="@image.Id" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+								</div>
+							</div>
+						</div>
 					}
 				}
 			</div>

@@ -11,9 +11,5 @@ namespace Library.Models
 		public string ImageUrl { get; set; }
 		public int ProductId { get; set; }
 		public bool IsCover { get; set; }
-
-		[ForeignKey("ProductId")]
-		[ValidateNever]
-		public Product Product { get; set; }
 	}
 }

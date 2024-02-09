@@ -97,10 +97,10 @@
 								@foreach (var order in Model.ProductList)
 								{
 									<li class="list-group-item d-flex row">
-										@if (!string.IsNullOrEmpty(order.Product.ImageUrl))
+										@if (order.Product.Images?.Count() > 0)
 										{
 											<div class="d-none d-lg-block col-2 text-center">
-												<img src="~/@order.Product.ImageUrl" class="rounded" width="100%" />
+												<img src="~/@order.Product.Images.First().ImageUrl" class="rounded" width="100%" />
 											</div>
 										}
 										<div class="col-7">
